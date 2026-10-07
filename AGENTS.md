@@ -190,6 +190,127 @@ Durante e depois da implementação:
 - Atualizar a documentação quando uma decisão de arquitetura, configuração ou escopo mudar.
 - Preservar alterações do usuário que não façam parte da tarefa atual.
 
+## Estratégia Git
+
+O projeto deve utilizar uma estratégia simples, baseada em branches curtas e adequada a um projeto acadêmico pequeno. Não adotar um Git Flow completo nem criar branches permanentes como `develop`, `release` ou `hotfix`, pois isso adicionaria complexidade desnecessária ao SolarAR.
+
+### Estratégia de branches
+
+A branch `main` representa o estado estável do projeto e deve permanecer funcional e demonstrável.
+
+Não desenvolver novas funcionalidades diretamente na `main`, salvo quando houver uma instrução explícita para isso. Antes de começar uma tarefa de desenvolvimento, verificar a branch atual. Novas alterações devem normalmente partir da versão mais recente da `main`.
+
+Fluxo esperado:
+
+```bash
+git switch main
+git pull origin main
+git switch -c <tipo>/<nome-da-tarefa>
+```
+
+Esses comandos, respectivamente, mudam para a branch estável, obtêm sua versão mais recente do repositório remoto e criam uma branch dedicada à nova tarefa. Antes de executá-los, preservar alterações locais em andamento e confirmar que a troca de branch é segura.
+
+#### Prefixos permitidos
+
+Usar:
+
+- `feature/` para novas funcionalidades.
+- `fix/` para correções de bugs.
+- `docs/` para alterações exclusivamente de documentação.
+- `chore/` para configuração, dependências, organização e manutenção.
+- `refactor/` para refatorações que não alterem o comportamento esperado.
+- `test/` para criação ou alteração de testes.
+
+#### Convenção para nomes de branches
+
+Os nomes das branches devem:
+
+- ser escritos em inglês;
+- utilizar letras minúsculas;
+- separar palavras com hífen;
+- descrever claramente o objetivo da tarefa;
+- evitar nomes genéricos ou pessoais.
+
+Exemplos:
+
+```text
+feature/ar-image-tracking
+feature/earth-planet
+feature/planet-gestures
+feature/educational-content
+
+fix/card-tracking-duplicate
+fix/planet-scale-limit
+
+docs/update-readme
+docs/update-architecture
+
+chore/configure-ar-foundation
+chore/configure-android-build
+
+refactor/planet-controller
+
+test/planet-data
+```
+
+#### Regras para branches
+
+- Uma branch deve representar apenas uma tarefa ou objetivo principal.
+- Não misturar funcionalidades independentes na mesma branch.
+- Manter branches pequenas e de curta duração.
+- Antes de iniciar uma branch, atualizar a `main`.
+- Não executar `force push` na `main`.
+- Não apagar ou sobrescrever alterações do usuário.
+- Antes de integrar uma branch, verificar se o projeto continua compilando e funcionando.
+- Alterações relacionadas à Unity devem preservar corretamente os arquivos `.meta`.
+- Não resolver conflitos de arquivos ou assets da Unity automaticamente sem entender o impacto.
+- Depois que uma branch for concluída, realizar uma revisão antes de integrá-la à `main`.
+- Após o merge e a confirmação de que a integração foi concluída corretamente, a branch pode ser removida.
+
+### Convenção de commits
+
+Utilizar mensagens de commit baseadas no padrão Conventional Commits simplificado:
+
+```text
+tipo: descrição curta
+```
+
+Tipos recomendados:
+
+- `feat:` nova funcionalidade.
+- `fix:` correção de bug.
+- `docs:` documentação.
+- `chore:` configuração, dependências ou manutenção.
+- `refactor:` refatoração sem alteração funcional.
+- `test:` testes.
+- `style:` formatação ou alterações que não modificam o comportamento.
+
+Exemplos:
+
+```text
+feat: add AR image tracking
+feat: add Earth planet prefab
+fix: prevent duplicate planet instances
+docs: update project architecture
+chore: configure AR Foundation
+chore: configure Android build
+refactor: simplify planet controller
+test: add planet data tests
+```
+
+Regras para commits:
+
+- Escrever mensagens de commit em inglês.
+- Usar uma descrição curta e objetiva.
+- Preferir verbos no imperativo ou descrições diretas.
+- Fazer commits pequenos e focados.
+- Cada commit deve representar uma alteração lógica.
+- Evitar mensagens vagas como `changes`, `update`, `fix`, `new stuff` ou similares.
+- Não incluir arquivos gerados, caches, builds ou arquivos ignorados pela configuração Git.
+- Antes de considerar uma tarefa concluída, revisar `git status` e `git diff`.
+- Não criar commits automaticamente, salvo quando solicitado explicitamente pelo usuário.
+- Não executar `git push` automaticamente, salvo quando solicitado explicitamente pelo usuário.
+
 ## Princípio de decisão
 
 Sempre priorizar a solução mais simples que cumpra o requisito e seja compatível com Unity, AR Foundation, ARCore e Android. Para o MVP, clareza, estabilidade e facilidade de demonstração são mais importantes do que flexibilidade especulativa, efeitos avançados ou uma arquitetura excessivamente genérica.
@@ -202,4 +323,20 @@ Sempre priorizar a solução mais simples que cumpra o requisito e seja compatí
 - Sempre que possível, explicar conceitos de Unity e C# de maneira simples, considerando que a desenvolvedora está aprendendo.
 - Não implementar funcionalidades que não tenham sido solicitadas.
 - Não executar alterações destrutivas sem explicar previamente a ação, o impacto e o motivo.
-- Antes de considerar uma tarefa concluída, verificar o `git diff`, procurar alterações inesperadas e avaliar possíveis problemas relevantes.
+- Antes de considerar uma tarefa concluída, verificar `git status` e `git diff`, procurar alterações inesperadas e avaliar possíveis problemas relevantes.
+
+### Regras específicas para trabalho com Codex e Git
+
+1. Antes de implementar uma tarefa, verificar a branch atual.
+2. Se a branch atual for `main` e a tarefa envolver código, configuração significativa ou uma nova funcionalidade, avisar que uma branch dedicada deve ser criada antes de continuar.
+3. Sugerir um nome de branch adequado seguindo a convenção do projeto.
+4. Não criar, trocar, fazer merge ou apagar branches sem solicitação ou aprovação explícita.
+5. Não realizar `commit`, `push`, `merge`, `rebase`, `reset`, checkout destrutivo ou `force push` sem solicitação explícita.
+6. O Codex pode sugerir comandos Git, mas deve explicar resumidamente o propósito deles ao trabalhar com uma desenvolvedora que está aprendendo.
+7. Nunca assumir que uma alteração deve ser enviada diretamente para a `main`.
+8. Ao terminar uma tarefa de desenvolvimento, apresentar:
+   - arquivos modificados;
+   - resumo das alterações;
+   - testes ou verificações executados;
+   - possíveis pendências;
+   - sugestão de mensagem de commit apropriada.
