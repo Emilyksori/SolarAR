@@ -166,6 +166,23 @@ Assets/
 - Evitar animações automáticas intensas; quando usadas, devem ser suaves e ter propósito educacional.
 - Validar decisões de acessibilidade com pessoas qualificadas e, quando possível, com representantes do público-alvo. Não presumir que uma única solução atende todas as pessoas neurodivergentes.
 
+## UI / UX e Design
+
+`docs/design/SolarAR-UI-Spec.md` é a especificação oficial para a futura implementação da interface do SolarAR. As imagens `docs/design/figma-styles.jpg`, `docs/design/figma-components.jpg` e `docs/design/figma-screens.jpg` são as referências visuais originais exportadas do Figma. O Figma e a especificação documentada devem ser tratados como fonte de verdade visual do projeto.
+
+Antes de criar ou modificar qualquer interface, consultar `docs/design/SolarAR-UI-Spec.md`. Não duplicar neste arquivo a paleta, os tamanhos ou os demais detalhes visuais mantidos na especificação e não inventar novas cores, tipografias, espaçamentos, componentes ou padrões de interação quando já houver uma definição documentada.
+
+- Reutilizar componentes visuais existentes sempre que forem adequados, mantendo consistência entre telas e estados.
+- Respeitar Safe Area, áreas mínimas de toque, responsividade em diferentes proporções de tela Android, legibilidade e acessibilidade.
+- Preservar a proposta de poucos estímulos simultâneos, previsibilidade, clareza e controle do usuário definida para o público do projeto.
+- Implementar os estados visuais de procura de card, reconhecimento, perda de tracking, pouca iluminação e troca de card conforme os comportamentos documentados.
+- Manter a interface separada da lógica de AR e tracking e da lógica de seleção e armazenamento do conteúdo educacional.
+- Fazer com que `PlanetHUD`, `MainMenu`, `Instructions` e `ARFeedback` respeitem a especificação visual quando forem implementados.
+- Manter `PlanetContent`, `PlanetFacts` e `EducationalContentManager` responsáveis pelos dados e pelo conteúdo educacional, sem acoplá-los diretamente à apresentação visual.
+- Refletir mudanças futuras relevantes no design aprovado primeiro na documentação de design, antes de aplicá-las à implementação.
+
+Quando houver conflito entre uma decisão visual improvisada durante a implementação e uma definição existente em `docs/design/SolarAR-UI-Spec.md`, a especificação documentada deve prevalecer, salvo decisão explícita de atualização do design.
+
 ## Regras para alterações futuras
 
 Antes de implementar uma mudança:
