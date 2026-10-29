@@ -59,6 +59,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1287661045239379671, guid: f60e1664ee2a12112bc1069b864683eb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4862490656193566734}
+    - targetCorrespondingSourceObject: {fileID: 1287661045239379671, guid: f60e1664ee2a12112bc1069b864683eb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5841301228044926371}
   m_SourcePrefab: {fileID: 8530202577677481101, guid: f60e1664ee2a12112bc1069b864683eb, type: 3}
 --- !u!1 &6123711878354244958 stripped
 GameObject:
@@ -75,12 +78,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4beb9296b97d43cbb9c8a18e22225925, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Planets.RotationController
   _rotationTarget: {fileID: 8561454963872553593}
   _rotationAxis: {x: 0, y: 1, z: 0}
   _rotationSpeedDegreesPerSecond: 10
   _autoRotate: 1
+--- !u!114 &5841301228044926371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6123711878354244958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91f1a6bb0c4f46eea991ead96e8118c4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Interaction.EarthGestureController
+  _visualTarget: {fileID: 8561454963872553593}
+  _rotationController: {fileID: 4862490656193566734}
+  _dragSensitivity: 0.2
+  _minScaleMultiplier: 0.5
+  _maxScaleMultiplier: 2
+  _mouseWheelSensitivity: 0.001
 --- !u!4 &8561454963872553593 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8300754878760109078, guid: f60e1664ee2a12112bc1069b864683eb, type: 3}

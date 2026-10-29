@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: EarthFacts
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: earth
-  _facts: []
+  _facts:
+  - _title: Vida
+    _description: É o único planeta conhecido que tem vida.
+  - _title: Nossa Lua
+    _description: Tem 1 lua, chamada Lua.

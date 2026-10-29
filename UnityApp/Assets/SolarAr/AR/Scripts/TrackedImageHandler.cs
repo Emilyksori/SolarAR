@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SolarAR.Planets;
 using UnityEngine;
@@ -9,6 +10,13 @@ namespace SolarAR.AR
     [RequireComponent(typeof(ARTrackedImageManager))]
     public sealed class TrackedImageHandler : MonoBehaviour
     {
+        public enum TrackedImageStatus
+        {
+            Searching,
+            Tracking,
+            Limited
+        }
+
         private sealed class TrackedPlanet
         {
             public TrackedPlanet(GameObject instance, TrackableId trackableId)
@@ -28,6 +36,11 @@ namespace SolarAR.AR
         private readonly HashSet<string> _unconfiguredImages = new();
         private ARTrackedImageManager _trackedImageManager;
         private bool _missingRegistryReported;
+
+        public event Action<string, TrackedImageStatus> TrackingStatusChanged;
+
+        public TrackedImageStatus CurrentStatus { get; private set; } =
+            TrackedImageStatus.Searching;
 
         private void Awake()
         {
@@ -96,7 +109,7 @@ namespace SolarAR.AR
                 reportedState != trackingState)
             {
                 Debug.Log(
-                    $"[ImageTracking] Handler processing {referenceImageName} - {trackingState}",
+                    $"[ImageTracking] {referenceImageName} - {trackingState}",
                     this);
                 _reportedTrackingStates[referenceImageName] = trackingState;
             }
@@ -104,11 +117,26 @@ namespace SolarAR.AR
             if (trackingState == TrackingState.None)
             {
                 HidePlanet(referenceImageName, trackedImage.trackableId);
+                PublishStatus(referenceImageName, TrackedImageStatus.Searching);
                 return;
             }
 
             var hasInstance = _trackedPlanets.TryGetValue(referenceImageName, out var trackedPlanet) &&
                               trackedPlanet.Instance != null;
+
+            if (trackingState == TrackingState.Limited)
+            {
+                if (!hasInstance)
+                {
+                    PublishStatus(referenceImageName, TrackedImageStatus.Searching);
+                    return;
+                }
+
+                trackedPlanet.TrackableId = trackedImage.trackableId;
+                trackedPlanet.Instance.SetActive(true);
+                PublishStatus(referenceImageName, TrackedImageStatus.Limited);
+                return;
+            }
 
             if (!hasInstance && _planetRegistry == null)
             {
@@ -123,8 +151,6 @@ namespace SolarAR.AR
 
             if (!hasInstance)
             {
-                Debug.Log($"[ImageTracking] Registry lookup for {referenceImageName}", this);
-
                 if (!_planetRegistry.TryGetPrefab(referenceImageName, out var planetPrefab))
                 {
                     if (_unconfiguredImages.Add(referenceImageName))
@@ -137,11 +163,6 @@ namespace SolarAR.AR
                     return;
                 }
 
-                Debug.Log(
-                    $"[ImageTracking] Prefab found for {referenceImageName}: {planetPrefab.name}",
-                    this);
-                Debug.Log($"[ImageTracking] Instantiating {planetPrefab.name}", this);
-
                 var instance = Instantiate(
                     planetPrefab,
                     trackedImage.transform.position,
@@ -149,27 +170,21 @@ namespace SolarAR.AR
                 trackedPlanet = new TrackedPlanet(instance, trackedImage.trackableId);
                 _trackedPlanets[referenceImageName] = trackedPlanet;
 
-                Debug.Log($"[ImageTracking] Created instance: {instance.name}", instance);
+                Debug.Log(
+                    $"[ImageTracking] Created {instance.name} for {referenceImageName}",
+                    instance);
             }
             else
             {
                 trackedPlanet.TrackableId = trackedImage.trackableId;
             }
 
-            if (trackingState == TrackingState.Tracking)
-            {
-                trackedPlanet.Instance.transform.SetPositionAndRotation(
-                    trackedImage.transform.position,
-                    trackedImage.transform.rotation);
-            }
+            trackedPlanet.Instance.transform.SetPositionAndRotation(
+                trackedImage.transform.position,
+                trackedImage.transform.rotation);
 
-            var wasActive = trackedPlanet.Instance.activeSelf;
             trackedPlanet.Instance.SetActive(true);
-
-            if (!hasInstance || !wasActive)
-            {
-                Debug.Log($"[ImageTracking] Instance active: {trackedPlanet.Instance.name}", this);
-            }
+            PublishStatus(referenceImageName, TrackedImageStatus.Tracking);
         }
 
         private void HidePlanet(string referenceImageName, TrackableId trackableId)
@@ -182,7 +197,6 @@ namespace SolarAR.AR
             }
 
             trackedPlanet.Instance.SetActive(false);
-            Debug.Log($"[ImageTracking] Hidden instance: {trackedPlanet.Instance.name}", this);
         }
 
         private void RemovePlanet(string referenceImageName, TrackableId removedTrackableId)
@@ -200,6 +214,18 @@ namespace SolarAR.AR
 
             _trackedPlanets.Remove(referenceImageName);
             _reportedTrackingStates.Remove(referenceImageName);
+            PublishStatus(referenceImageName, TrackedImageStatus.Searching);
+        }
+
+        private void PublishStatus(string referenceImageName, TrackedImageStatus status)
+        {
+            if (CurrentStatus == status)
+            {
+                return;
+            }
+
+            CurrentStatus = status;
+            TrackingStatusChanged?.Invoke(referenceImageName, status);
         }
     }
 }
