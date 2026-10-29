@@ -24,6 +24,7 @@ namespace SolarAR.AR
         [SerializeField] private PlanetRegistry _planetRegistry;
 
         private readonly Dictionary<string, TrackedPlanet> _trackedPlanets = new();
+        private readonly Dictionary<string, TrackingState> _reportedTrackingStates = new();
         private readonly HashSet<string> _unconfiguredImages = new();
         private ARTrackedImageManager _trackedImageManager;
         private bool _missingRegistryReported;
@@ -51,6 +52,7 @@ namespace SolarAR.AR
             }
 
             _unconfiguredImages.Clear();
+            _reportedTrackingStates.Clear();
             _missingRegistryReported = false;
         }
 
@@ -88,8 +90,27 @@ namespace SolarAR.AR
         private void UpdatePlanet(ARTrackedImage trackedImage)
         {
             var referenceImageName = trackedImage.referenceImage.name;
+            var trackingState = trackedImage.trackingState;
 
-            if (_planetRegistry == null)
+            if (!_reportedTrackingStates.TryGetValue(referenceImageName, out var reportedState) ||
+                reportedState != trackingState)
+            {
+                Debug.Log(
+                    $"[ImageTracking] Handler processing {referenceImageName} - {trackingState}",
+                    this);
+                _reportedTrackingStates[referenceImageName] = trackingState;
+            }
+
+            if (trackingState == TrackingState.None)
+            {
+                HidePlanet(referenceImageName, trackedImage.trackableId);
+                return;
+            }
+
+            var hasInstance = _trackedPlanets.TryGetValue(referenceImageName, out var trackedPlanet) &&
+                              trackedPlanet.Instance != null;
+
+            if (!hasInstance && _planetRegistry == null)
             {
                 if (!_missingRegistryReported)
                 {
@@ -100,37 +121,68 @@ namespace SolarAR.AR
                 return;
             }
 
-            if (!_planetRegistry.TryGetPrefab(referenceImageName, out var planetPrefab))
+            if (!hasInstance)
             {
-                if (_unconfiguredImages.Add(referenceImageName))
+                Debug.Log($"[ImageTracking] Registry lookup for {referenceImageName}", this);
+
+                if (!_planetRegistry.TryGetPrefab(referenceImageName, out var planetPrefab))
                 {
-                    Debug.LogWarning(
-                        $"[ImageTracking] No planet prefab is configured for reference image '{referenceImageName}'.",
-                        this);
+                    if (_unconfiguredImages.Add(referenceImageName))
+                    {
+                        Debug.LogWarning(
+                            $"[ImageTracking] No prefab found for {referenceImageName}",
+                            this);
+                    }
+
+                    return;
                 }
 
-                return;
-            }
+                Debug.Log(
+                    $"[ImageTracking] Prefab found for {referenceImageName}: {planetPrefab.name}",
+                    this);
+                Debug.Log($"[ImageTracking] Instantiating {planetPrefab.name}", this);
 
-            if (!_trackedPlanets.TryGetValue(referenceImageName, out var trackedPlanet) ||
-                trackedPlanet.Instance == null)
-            {
-                var instance = Instantiate(planetPrefab, trackedImage.transform);
+                var instance = Instantiate(
+                    planetPrefab,
+                    trackedImage.transform.position,
+                    trackedImage.transform.rotation);
                 trackedPlanet = new TrackedPlanet(instance, trackedImage.trackableId);
                 _trackedPlanets[referenceImageName] = trackedPlanet;
+
+                Debug.Log($"[ImageTracking] Created instance: {instance.name}", instance);
             }
             else
             {
                 trackedPlanet.TrackableId = trackedImage.trackableId;
-
-                if (trackedPlanet.Instance.transform.parent != trackedImage.transform)
-                {
-                    trackedPlanet.Instance.transform.SetParent(trackedImage.transform, false);
-                }
             }
 
-            trackedPlanet.Instance.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-            trackedPlanet.Instance.SetActive(trackedImage.trackingState == TrackingState.Tracking);
+            if (trackingState == TrackingState.Tracking)
+            {
+                trackedPlanet.Instance.transform.SetPositionAndRotation(
+                    trackedImage.transform.position,
+                    trackedImage.transform.rotation);
+            }
+
+            var wasActive = trackedPlanet.Instance.activeSelf;
+            trackedPlanet.Instance.SetActive(true);
+
+            if (!hasInstance || !wasActive)
+            {
+                Debug.Log($"[ImageTracking] Instance active: {trackedPlanet.Instance.name}", this);
+            }
+        }
+
+        private void HidePlanet(string referenceImageName, TrackableId trackableId)
+        {
+            if (!_trackedPlanets.TryGetValue(referenceImageName, out var trackedPlanet) ||
+                trackedPlanet.TrackableId != trackableId ||
+                trackedPlanet.Instance == null)
+            {
+                return;
+            }
+
+            trackedPlanet.Instance.SetActive(false);
+            Debug.Log($"[ImageTracking] Hidden instance: {trackedPlanet.Instance.name}", this);
         }
 
         private void RemovePlanet(string referenceImageName, TrackableId removedTrackableId)
@@ -147,6 +199,7 @@ namespace SolarAR.AR
             }
 
             _trackedPlanets.Remove(referenceImageName);
+            _reportedTrackingStates.Remove(referenceImageName);
         }
     }
 }
