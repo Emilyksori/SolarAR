@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55769819ac12460e96958127f8b79bab, type: 3}
+  m_Name: EarthContent
+  m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetContent
+  _planetKey: earth
+  _displayName: Terra
+  _orderFromSun: 3
+  _shortDescription: Nosso planeta, coberto principalmente por água e lar de milhões de espécies.
+  _educationalSummary: A Terra é o terceiro planeta a partir do Sol e o único mundo conhecido com vida. Sua atmosfera e água líquida ajudam a manter condições adequadas para muitos seres vivos.
+  _diameterKm: 12742
+  _distanceFromSunMillionKm: 149.6
+  _orbitalPeriodDays: 365.25
+  _rotationPeriodHours: 23.93
+  _moonCount: 1
+  _averageTemperatureCelsius: 15
+  _thumbnail: {fileID: 0}
