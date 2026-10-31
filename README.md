@@ -477,8 +477,11 @@ Depois adicione ao README, se os arquivos existirem:
 
 A solução foi validada no XR Simulation e em dispositivo Android compatível com ARCore.
 
-Para a entrega, incluir pelo menos uma captura real do aplicativo e, se possível, um vídeo curto demonstrando reconhecimento e interação. Armazenar imagens em `docs/images/`.
+**Demonstração do reconhecimento e interação:**
 
+<video src="docs/evidencia_reconhecimento_de_card.mp4" controls width="100%">
+  Seu navegador não suporta a reprodução de vídeos.
+</video>
 ---
 
 ## 26. Repositórios e Recursos
