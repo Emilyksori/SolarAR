@@ -479,9 +479,8 @@ A solução foi validada no XR Simulation e em dispositivo Android compatível c
 
 **Demonstração do reconhecimento e interação:**
 
-<video src="docs/evidencia_reconhecimento_de_card.mp4" controls width="100%">
-  Seu navegador não suporta a reprodução de vídeos.
-</video>
+[▶ Assistir ao vídeo de demonstração](docs/evidencia_reconhecimento_de_card.mp4)
+
 ---
 
 ## 26. Repositórios e Recursos
