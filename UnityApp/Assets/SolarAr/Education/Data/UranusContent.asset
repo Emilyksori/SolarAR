@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55769819ac12460e96958127f8b79bab, type: 3}
+  m_Name: UranusContent
+  m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetContent
+  _planetKey: uranus
+  _displayName: Urano
+  _orderFromSun: 7
+  _shortDescription: Um gigante de gelo azul-esverdeado que gira de lado.
+  _educationalSummary: "Urano tem metano em sua atmosfera, an\xE9is discretos e uma inclina\xE7\xE3o t\xE3o grande que parece rolar ao redor do Sol."
+  _diameterKm: 51118
+  _distanceFromSunMillionKm: 2900
+  _orbitalPeriodDays: 30687
+  _rotationPeriodHours: -17.2
+  _moonCount: 29
+  _averageTemperatureCelsius: -195
+  _thumbnail: {fileID: 21300000, guid: 7627573793a0151e8b92002883c11047, type: 3}

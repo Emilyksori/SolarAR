@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace SolarAR.UI
 {
-    internal static class SolarARColors
+    public static class SolarARColors
     {
         public static readonly Color Night = Hex("0A1433");
         public static readonly Color Ink = Hex("19365B");
@@ -27,7 +27,7 @@ namespace SolarAR.UI
         }
     }
 
-    internal sealed class SolarARUIFactory
+    public sealed class SolarARUIFactory
     {
         private readonly TMP_FontAsset _titleFont;
         private readonly TMP_FontAsset _bodyFont;
@@ -61,11 +61,13 @@ namespace SolarAR.UI
                 RoundedRectangleGraphic graphic = instance.AddComponent<RoundedRectangleGraphic>();
                 graphic.color = color;
                 graphic.Radius = radius;
+                graphic.raycastTarget = false;
             }
             else
             {
                 Image image = instance.AddComponent<Image>();
                 image.color = color;
+                image.raycastTarget = false;
             }
 
             return rect;
@@ -103,7 +105,7 @@ namespace SolarAR.UI
             text.color = color;
             text.alignment = alignment;
             text.fontStyle = style;
-            text.enableWordWrapping = true;
+            text.textWrappingMode = TextWrappingModes.Normal;
             text.overflowMode = TextOverflowModes.Truncate;
             text.raycastTarget = false;
             return text;
@@ -123,6 +125,7 @@ namespace SolarAR.UI
             RectTransform rect = Panel(name, parent, background, radius);
             Button button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = rect.GetComponent<Graphic>();
+            button.targetGraphic.raycastTarget = true;
             button.transition = Selectable.Transition.ColorTint;
             ColorBlock colors = button.colors;
             colors.normalColor = Color.white;
@@ -143,7 +146,7 @@ namespace SolarAR.UI
                 foreground,
                 TextAlignmentOptions.Center,
                 title,
-                FontStyles.SemiBold);
+                FontStyles.Bold);
             Stretch(text.rectTransform, 12f, 6f, 12f, 6f);
             return button;
         }

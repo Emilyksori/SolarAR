@@ -36,11 +36,14 @@ namespace SolarAR.AR
         private readonly HashSet<string> _unconfiguredImages = new();
         private ARTrackedImageManager _trackedImageManager;
         private bool _missingRegistryReported;
+        private string _activeReferenceImageName;
+        private string _lastPublishedReferenceImageName;
 
         public event Action<string, TrackedImageStatus> TrackingStatusChanged;
 
         public TrackedImageStatus CurrentStatus { get; private set; } =
             TrackedImageStatus.Searching;
+        public string ActiveReferenceImageName => _activeReferenceImageName;
 
         private void Awake()
         {
@@ -67,6 +70,9 @@ namespace SolarAR.AR
             _unconfiguredImages.Clear();
             _reportedTrackingStates.Clear();
             _missingRegistryReported = false;
+            _activeReferenceImageName = null;
+            _lastPublishedReferenceImageName = null;
+            CurrentStatus = TrackedImageStatus.Searching;
         }
 
         private void OnDestroy()
@@ -117,7 +123,11 @@ namespace SolarAR.AR
             if (trackingState == TrackingState.None)
             {
                 HidePlanet(referenceImageName, trackedImage.trackableId);
-                PublishStatus(referenceImageName, TrackedImageStatus.Searching);
+                if (referenceImageName == _activeReferenceImageName)
+                {
+                    PublishStatus(referenceImageName, TrackedImageStatus.Searching);
+                }
+
                 return;
             }
 
@@ -126,9 +136,8 @@ namespace SolarAR.AR
 
             if (trackingState == TrackingState.Limited)
             {
-                if (!hasInstance)
+                if (!hasInstance || referenceImageName != _activeReferenceImageName)
                 {
-                    PublishStatus(referenceImageName, TrackedImageStatus.Searching);
                     return;
                 }
 
@@ -183,8 +192,21 @@ namespace SolarAR.AR
                 trackedImage.transform.position,
                 trackedImage.transform.rotation);
 
+            DeactivateOtherPlanets(referenceImageName);
+            _activeReferenceImageName = referenceImageName;
             trackedPlanet.Instance.SetActive(true);
             PublishStatus(referenceImageName, TrackedImageStatus.Tracking);
+        }
+
+        private void DeactivateOtherPlanets(string activeReferenceImageName)
+        {
+            foreach (var pair in _trackedPlanets)
+            {
+                if (pair.Key != activeReferenceImageName && pair.Value.Instance != null)
+                {
+                    pair.Value.Instance.SetActive(false);
+                }
+            }
         }
 
         private void HidePlanet(string referenceImageName, TrackableId trackableId)
@@ -214,17 +236,26 @@ namespace SolarAR.AR
 
             _trackedPlanets.Remove(referenceImageName);
             _reportedTrackingStates.Remove(referenceImageName);
-            PublishStatus(referenceImageName, TrackedImageStatus.Searching);
+            if (referenceImageName == _activeReferenceImageName)
+            {
+                _activeReferenceImageName = null;
+                PublishStatus(referenceImageName, TrackedImageStatus.Searching);
+            }
         }
 
         private void PublishStatus(string referenceImageName, TrackedImageStatus status)
         {
-            if (CurrentStatus == status)
+            if (CurrentStatus == status &&
+                string.Equals(
+                    _lastPublishedReferenceImageName,
+                    referenceImageName,
+                    StringComparison.Ordinal))
             {
                 return;
             }
 
             CurrentStatus = status;
+            _lastPublishedReferenceImageName = referenceImageName;
             TrackingStatusChanged?.Invoke(referenceImageName, status);
         }
     }
