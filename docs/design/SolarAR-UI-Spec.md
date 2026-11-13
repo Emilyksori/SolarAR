@@ -14,6 +14,22 @@ Visualmente, o Figma combina um fundo noturno, superfícies claras, azul e ciano
 
 ## 2. Base de layout
 
+### 2.1 Refinamentos aprovados para o MVP de sete planetas
+
+Os refinamentos abaixo substituem as referências anteriores quando houver conflito:
+
+- usar `Fredoka` em peso semibold ou bold para títulos e `Nunito` em peso regular ou semibold para corpo, ações e informações, evitando a aparência light/extra-light anterior;
+- remover da permissão de câmera o título `Podemos usar a câmera?` e o bloco `Não tiramos nem guardamos fotos.`, sem adicionar título substituto; manter uma composição direta, com ilustração de câmera central, explicação curta e CTA `Abrir câmera`;
+- reservar a lua-mascote para a experiência de curiosidades, sem usá-la para solicitar permissão;
+- remover o CTA `Toque no planeta para saber mais` do estado reconhecido;
+- usar exatamente `Assets/SolarAr/UI/Illustrations/CuriosityMoon.png` como lua-mascote, sem redesenho; mostrá-la no canto do estado reconhecido, acompanhada do indicador `Curiosidades`; ao tocar nela, substituir o convite por um painel editorial de aproximadamente meia tela com uma versão compacta do mesmo asset e duas curiosidades do `PlanetFacts` atual, reduzindo temporariamente o planeta para equilibrar a composição sem sobreposições;
+- aplicar ao cartão de curiosidades um acento de cor associado ao planeta: cinza quente para Mercúrio, azul/verde para Terra, vermelho para Marte, marrom para Júpiter, dourado suave para Saturno, ciano para Urano e azul profundo para Netuno;
+- permitir rotação manual em dois eixos por arraste, mantendo a rotação automática pausada durante a interação;
+- exibir o planeta em AR com diâmetro visual inicial de aproximadamente `0,058 m`, centro visual a `0,035 m` acima do card e oscilação vertical suave de até `0,003 m`;
+- nas visualizações sem câmera, desativar a oscilação e o offset AR e normalizar o diâmetro visual para aproximadamente `0,048 m`, mantendo o modelo centralizado no preview;
+- priorizar fatos curtos, surpreendentes e adequados a crianças, evitando repetir apenas as características básicas já apresentadas na descrição do planeta;
+- manter somente um planeta ativo, mas permitir a troca sequencial de cards na mesma sessão de câmera, atualizando modelo, estado e curiosidades sem retornar ao menu.
+
 | Propriedade | Especificação |
 |---|---|
 | Plataforma de referência | Android |

@@ -10,7 +10,7 @@
 
 ---
 
-## 1. Identificação do Projeto
+## 1. Identificação do projeto
 
 | Item | Informação |
 |---|---|
@@ -26,138 +26,124 @@
 
 | Nome | RA | Responsabilidade |
 |---|---|---|
-| Emily Kaori | 35470 | Tech Lead; desenvolvimento Unity, integração de RA e testes |
-| Éric Ferreira de Arruda | 211393 | Modelador; Desenvolvedor |
-| Kevin Scavassin | 235185 | PMO; Planejamento e acompanhamento do projeto |
-| Renan Lara | 235268 | Scrum Master; Organização do fluxo de trabalho |
-| Roberto Dutra | 235789 | Pesquisa e esenvolvimento |
-
-> **Antes da entrega:** substituir apenas os quatro campos de RA acima pelos números reais dos integrantes.
+| Emily Kaori Uehara Soares | 235470 | Tech Lead; desenvolvimento Unity, integração de RA e testes |
+| Kevin Suzuki Scavassin | 235185 | PMO; planejamento e acompanhamento do projeto |
+| Renan Lara Melo | 235268 | Scrum Master; organização do fluxo de trabalho |
+| Roberto Dutra Fernandes Filho | 235789 | Pesquisa e desenvolvimento |
+| Éric Ferreira de Arruda | 211393 | Modelagem e desenvolvimento |
 
 ---
 
-## 2. Visão Geral
+## 2. Visão geral
 
-O **SolarAR** é uma aplicação educacional em Realidade Aumentada voltada à aprendizagem introdutória do Sistema Solar. A proposta utiliza cards físicos como referências visuais: ao apontar a câmera de um smartphone Android para um card cadastrado, a aplicação reconhece a imagem e exibe sobre ela um modelo tridimensional do planeta correspondente.
+O **SolarAR** é uma aplicação educacional em Realidade Aumentada voltada à aprendizagem introdutória do Sistema Solar. Ao apontar a câmera de um smartphone Android para um card cadastrado, a aplicação reconhece a imagem e exibe sobre ela o modelo tridimensional do planeta correspondente.
 
-O projeto busca tornar a visualização dos planetas mais concreta e interativa do que representações exclusivamente bidimensionais. O usuário pode observar o planeta em 3D, manipulá-lo e consultar informações educacionais curtas.
+O MVP implementa sete planetas: **Mercúrio, Terra, Marte, Júpiter, Saturno, Urano e Netuno**. Cada card oficial reconhece somente o prefab correspondente. A galeria também permite explorar os mesmos modelos e conteúdos educacionais sem usar a câmera. Vênus, Sol, Lua como objetos visualizáveis e áudio explicativo não fazem parte desta versão.
 
-No estágio atual da entrega, o MVP implementa integralmente o fluxo da **Terra**, desde o reconhecimento do `EarthCard` até a exibição do modelo 3D e de seu conteúdo educacional. A arquitetura foi preparada para permitir a inclusão posterior dos demais planetas sem reestruturar o núcleo da aplicação.
-
----
-
-## 3. Problema
-
-O ensino do Sistema Solar costuma depender de imagens bidimensionais, diagramas e explicações abstratas. Para crianças em fase de alfabetização, compreender relações espaciais, forma dos planetas e representação tridimensional pode ser difícil quando o conteúdo é apresentado somente em livros ou telas planas.
-
-O SolarAR foi desenvolvido como um recurso educacional complementar que associa um elemento físico simples — um card — a uma representação 3D interativa. O objetivo não é substituir a mediação pedagógica, mas oferecer uma forma visual e concreta de exploração.
+O usuário pode observar o planeta em 3D, rotacioná-lo, redimensioná-lo e consultar informações educacionais curtas. A interface prioriza previsibilidade, poucos estímulos simultâneos e controles simples.
 
 ---
 
-## 4. Objetivos
+## 3. Problema e objetivo
 
-### 4.1 Objetivo Geral
+O ensino do Sistema Solar costuma depender de imagens bidimensionais, diagramas e explicações abstratas. Para crianças em fase de alfabetização, compreender formas e relações espaciais pode ser difícil quando o conteúdo é apresentado somente em livros ou telas planas.
 
-Desenvolver uma aplicação educacional em Realidade Aumentada baseada em cards interativos dos planetas para apoiar a aprendizagem introdutória do Sistema Solar.
+O SolarAR associa um elemento físico simples — um card — a uma representação 3D interativa. O objetivo não é substituir a mediação pedagógica, mas oferecer uma forma visual e concreta de exploração.
 
-### 4.2 Objetivos Técnicos
+### Objetivos técnicos
 
-- Configurar um projeto Unity para Realidade Aumentada em Android.
-- Utilizar AR Foundation e Google ARCore.
-- Implementar reconhecimento de cards por **Image Tracking**.
-- Associar cada imagem de referência a um prefab de planeta.
-- Exibir um modelo 3D sobre o card reconhecido.
-- Permitir rotação e redimensionamento do planeta.
-- Disponibilizar conteúdo educacional configurável.
-- Tratar reconhecimento, perda e recuperação de tracking.
-- Testar no XR Simulation e em dispositivo Android real.
-- Gerar um APK instalável do MVP.
-
----
-
-## 5. Público-Alvo
-
-O público-alvo do SolarAR é composto por **crianças em fase de alfabetização, aproximadamente entre 6 e 11 anos**, em contextos introdutórios de aprendizagem sobre o Sistema Solar.
-
-A solução prioriza instruções curtas, interação direta, apenas um planeta em destaque por vez, conteúdo visual e textual simples e controles previsíveis. Nesta etapa não foi realizado experimento direto com crianças.
+- executar uma experiência de Realidade Aumentada em Android;
+- utilizar AR Foundation e Google ARCore;
+- reconhecer cards por **Image Tracking**;
+- associar cada imagem de referência a um único prefab de planeta;
+- exibir e manter o modelo 3D sobre o card rastreado;
+- permitir rotação automática, rotação manual e redimensionamento com limites;
+- permitir troca de cards durante a mesma sessão de AR;
+- disponibilizar conteúdo educacional configurável;
+- tratar reconhecimento, perda e recuperação de tracking;
+- permitir a visualização dos planetas sem câmera;
+- testar no XR Simulation e em dispositivo Android compatível;
+- gerar um APK instalável do MVP.
 
 ---
 
-## 6. Funcionalidades
+## 4. Público-alvo e acessibilidade
+
+O público-alvo é composto por **crianças em fase de alfabetização, aproximadamente entre 6 e 11 anos**, em contextos introdutórios de aprendizagem sobre o Sistema Solar.
+
+A solução foi projetada com:
+
+- instruções curtas e consistentes;
+- interação direta;
+- apenas um planeta em destaque por vez;
+- conteúdo visual e textual simples;
+- controles grandes e previsíveis;
+- baixa quantidade de estímulos simultâneos;
+- informação que não depende somente de cor ou áudio.
+
+Nesta etapa não foi realizado experimento direto com crianças. Decisões de acessibilidade ainda devem ser validadas com pessoas qualificadas e, quando possível, com representantes do público-alvo.
+
+---
+
+## 5. Funcionalidades
 
 | ID | Funcionalidade | Descrição | Status |
 |---|---|---|---|
-| RF01 | Iniciar experiência RA | Inicializa a cena principal com câmera e sistemas de RA | ✅ |
-| RF02 | Reconhecer EarthCard | Detecta o card cadastrado da Terra | ✅ |
-| RF03 | Exibir Terra em 3D | Instancia o `EarthPrefab` associado ao card | ✅ |
+| RF01 | Iniciar experiência AR | Inicializa a cena principal com câmera e sistemas de AR | ✅ |
+| RF02 | Reconhecer cards oficiais | Detecta os sete cards físicos cadastrados | ✅ |
+| RF03 | Exibir planeta em 3D | Instancia somente o prefab associado ao card reconhecido | ✅ |
 | RF04 | Acompanhar tracking | Atualiza a pose do planeta conforme o card rastreado | ✅ |
-| RF05 | Recuperar tracking | Preserva/recupera a experiência conforme o estado do tracking | ✅ |
-| RF06 | Rotação automática | Mantém rotação suave do modelo visual da Terra | ✅ |
-| RF07 | Interagir com o planeta | Permite manipulação do modelo | ✅ |
-| RF08 | Redimensionar planeta | Permite alteração de escala com limites | ✅ |
-| RF09 | Conteúdo educacional | Disponibiliza dados e curiosidades da Terra | ✅ |
-| RF10 | Interface educacional | Exibe feedback e informações do planeta | ✅ |
-| RF11 | Outros planetas | Inclusão dos demais sete planetas | ⬜ |
-| RF12 | Áudio educacional | Narração opcional | ⬜ |
+| RF05 | Recuperar tracking | Mantém ou recupera o planeta conforme o estado do tracking | ✅ |
+| RF06 | Rotação automática | Mantém rotação suave do modelo visual | ✅ |
+| RF07 | Rotação manual | Permite que o usuário rotacione o planeta | ✅ |
+| RF08 | Zoom por gesto | Redimensiona o planeta com limites seguros | ✅ |
+| RF09 | Troca de cards | Permite reconhecer outro card na mesma sessão | ✅ |
+| RF10 | Conteúdo educacional | Exibe dados e curiosidades dos sete planetas | ✅ |
+| RF11 | Galeria de planetas | Permite explorar os sete planetas sem câmera | ✅ |
+| RF12 | Interface e navegação | Exibe instruções, feedback e controles | ✅ |
+| RF13 | Áudio educacional | Fora do escopo desta versão | ❌ |
 
-**Legenda:** ✅ Implementado · 🚧 Em desenvolvimento · ⬜ Planejado · ❌ Cancelado
+**Legenda:** ✅ Implementado · 🚧 Em desenvolvimento · ⬜ Planejado · ❌ Fora do escopo
 
----
-
-## 7. Requisitos Não Funcionais
+### Requisitos não funcionais
 
 | ID | Categoria | Requisito |
 |---|---|---|
-| RNF01 | Compatibilidade | Executar em Android compatível com ARCore |
+| RNF01 | Compatibilidade | Executar em dispositivo Android compatível com ARCore |
 | RNF02 | Usabilidade | Apresentar instruções claras e interação simples |
 | RNF03 | Desempenho | Manter o modelo 3D utilizável durante o tracking |
-| RNF04 | Hardware | Requer câmera traseira e suporte a ARCore |
+| RNF04 | Hardware | Requer câmera traseira e suporte a ARCore para o modo AR |
 | RNF05 | Tracking | O card deve permanecer suficientemente visível |
-| RNF06 | Interface | Respeitar Safe Area e diferentes proporções Android |
+| RNF06 | Interface | Respeitar Safe Area e diferentes proporções de tela Android |
 | RNF07 | Manutenibilidade | Separar AR, planetas, interação, educação e UI |
-| RNF08 | Segurança | Não armazenar imagens capturadas nem segredos |
+| RNF08 | Segurança | Não armazenar imagens da câmera nem utilizar credenciais sensíveis |
 
 ---
 
-## 8. Tecnologias Utilizadas
+## 6. Tecnologias utilizadas
 
 | Tecnologia | Versão | Utilização |
 |---|---|---|
 | Unity | **6000.6.4f1** | Engine principal |
-| C# | Compatível com Unity 6 | Programação |
-| AR Foundation | **6.6.2** | Camada de abstração de RA |
-| Google ARCore XR Plugin | **6.6.2** | Provider RA no Android |
-| XR Plug-in Management | **4.7.0** | Gerenciamento XR |
-| XR Simulation | **6.6.2** | Simulação RA no Editor |
-| glTFast | **6.20.0** | Importação GLB |
+| C# | Compatível com Unity 6 | Programação da aplicação |
+| AR Foundation | **6.6.2** | Camada de abstração de AR |
+| Google ARCore XR Plugin | **6.6.2** | Provider de AR no Android |
+| XR Plug-in Management | **4.7.0** | Configuração dos loaders XR |
+| XR Simulation | **6.6.2** | Simulação da experiência no Editor |
+| glTFast | **6.20.0** | Importação do modelo GLB |
 | Input System | **1.20.0** | Entrada e interações |
-| URP | **17.6.0** | Pipeline gráfico |
-| Blender | **4.4.3** | Recursos 3D |
-| Git / GitHub | — | Versionamento e repositório |
-| Figma | — | Design e especificação visual |
+| Universal Render Pipeline | **17.6.0** | Pipeline gráfico |
+| Blender | **4.4.3** | Preparação de recursos 3D |
+| Git / GitHub | — | Controle de versão e repositório |
+| Figma | — | Referência e especificação de UI/UX |
+
+As dependências estão registradas em `UnityApp/Packages/manifest.json` e `UnityApp/Packages/packages-lock.json`.
 
 ---
 
-## 9. Hardware Utilizado
+## 7. Arquitetura
 
-| Equipamento | Modelo | Característica relevante | Utilização |
-|---|---|---|---|
-| Smartphone Android | **Modelo não registrado no README até o momento** | Compatível com ARCore | Teste do APK e RA |
-| Computador de desenvolvimento | Linux x86_64 | Unity Editor, Git e ferramentas | Desenvolvimento |
-
-Para obter os dados do smartphone conectado:
-
-```bash
-adb shell getprop ro.product.manufacturer
-adb shell getprop ro.product.model
-adb shell getprop ro.build.version.release
-```
-
-> Antes da entrega, substituir “Modelo não registrado” pelo dispositivo real testado.
-
----
-
-## 10. Arquitetura do Sistema
+A arquitetura mantém o módulo de AR separado de interação, planetas, dados educacionais e interface.
 
 ```mermaid
 flowchart TD
@@ -168,161 +154,168 @@ flowchart TD
     ARC --> CAM[Câmera e sensores]
     AR --> TI[TrackedImageHandler]
     TI --> PR[PlanetRegistry]
-    PR --> EP[EarthPrefab]
-    EP --> RC[RotationController]
+    PR --> PP[Prefab correspondente]
+    PP --> RI[Rotação e escala]
     UI --> EDU[EducationalContentManager]
-    EDU --> PC[EarthContent]
-    EDU --> PF[EarthFacts]
+    EDU --> PC[PlanetContent]
+    EDU --> PF[PlanetFacts]
 ```
 
-A arquitetura separa AR, conteúdo 3D, interação, dados educacionais e interface para reduzir acoplamento e facilitar a expansão futura.
+### Módulos principais
+
+- `AR`: reconhecimento e ciclo de vida do tracking;
+- `Planets`: modelos, prefabs, dados de exibição e comportamentos visuais;
+- `Interaction`: gestos de rotação e escala;
+- `Education`: dados e curiosidades independentes da lógica de AR;
+- `UI`: navegação, instruções, feedback e apresentação visual;
+- `Editor`: construção e validação automatizada do MVP dentro do Unity.
+
+### Principais scripts e componentes
+
+| Script / componente | Responsabilidade |
+|---|---|
+| `TrackedImageDebugLogger.cs` | Registra mudanças relevantes de tracking durante desenvolvimento e testes |
+| `TrackedImageHandler.cs` | Processa o ciclo de vida do `ARTrackedImage` e controla a instância ativa |
+| `PlanetRegistry.cs` | Mapeia o nome da imagem de referência para `planetKey` e prefab |
+| `RotationController.cs` | Controla a rotação automática do modelo visual |
+| `EarthGestureController.cs` | Interpreta rotação manual e gesto de pinça para o planeta ativo |
+| `PlanetDisplay.cs` | Identifica o planeta exibido |
+| `PlanetPreviewController.cs` | Controla a visualização de planetas sem câmera |
+| `PlanetContent.cs` | Define os dados educacionais de um planeta |
+| `PlanetFacts.cs` | Agrupa curiosidades por planeta |
+| `EducationalContentManager.cs` | Fornece conteúdo usando `planetKey` |
+| `EarthMvpUI.cs` | Coordena estados e navegação da interface do MVP |
+| `SolarARReferenceImageLibrary` | Biblioteca com os sete cards oficiais |
 
 ---
 
-## 11. Funcionamento da Realidade Aumentada
+## 8. Funcionamento da Realidade Aumentada
 
-### 11.1 Técnica utilizada
-
-O SolarAR utiliza **Image Tracking**. O `EarthCard` é cadastrado em uma `XRReferenceImageLibrary`. Quando o ARCore reconhece a imagem, o AR Foundation fornece um `ARTrackedImage` com pose e estado de tracking.
-
-### 11.2 Fluxo técnico
+O SolarAR utiliza **Image Tracking**. Os sete cards são cadastrados em uma `XRReferenceImageLibrary`. Quando o ARCore reconhece uma imagem, o AR Foundation fornece um `ARTrackedImage` com nome de referência, pose e estado de tracking.
 
 ```mermaid
 flowchart TD
     A[Abrir SolarAR] --> B[Ativar AR Session e câmera]
     B --> C[ARTrackedImageManager]
-    C --> D{EarthCard reconhecido?}
+    C --> D{Card oficial reconhecido?}
     D -- Não --> C
     D -- Sim --> E[TrackedImageHandler]
     E --> F[PlanetRegistry]
-    F --> G[EarthPrefab]
-    G --> H[Posicionar modelo no card]
-    H --> I[Rotação / escala / conteúdo]
+    F --> G[Selecionar o prefab correspondente]
+    G --> H[Posicionar o modelo sobre o card]
+    H --> I[Rotação, escala e conteúdo]
     I --> J{Tracking válido?}
     J -- Sim --> H
-    J -- Limitado --> K[Preservar experiência]
+    J -- Limitado --> K[Preservar estado visual]
     J -- Perdido --> L[Ocultar e aguardar recuperação]
+    L --> C
 ```
 
-### 11.3 Estados
+Estados tratados:
 
-- **Tracking:** planeta ativo e pose atualizada.
-- **Limited:** perda temporária de precisão; a experiência é preservada quando possível.
-- **None:** instância pode ser ocultada.
-- **Removed:** instância associada é removida.
+- **Tracking:** planeta ativo e pose atualizada;
+- **Limited:** perda temporária de precisão; a experiência é preservada quando possível;
+- **None:** instância pode ser ocultada;
+- **Removed:** vínculo e instância associados são removidos.
+
+O registro atual associa explicitamente:
+
+| Imagem de referência | Planeta |
+|---|---|
+| `MercuryCard` | Mercúrio |
+| `EarthCard` | Terra |
+| `MarsCard` | Marte |
+| `JupiterCard` | Júpiter |
+| `SaturnCard` | Saturno |
+| `UranusCard` | Urano |
+| `NeptuneCard` | Netuno |
 
 ---
 
-## 12. Estrutura do Projeto
+## 9. Estrutura do projeto
 
 ```text
 SolarAR/
 ├── UnityApp/
-│   ├── Assets/SolarAr/
-│   │   ├── AR/
-│   │   ├── Education/
-│   │   ├── Interaction/
-│   │   ├── Planets/
-│   │   ├── Scenes/
-│   │   ├── Simulation/
-│   │   └── UI/
+│   ├── Assets/
+│   │   ├── Editor/
+│   │   └── SolarAr/
+│   │       ├── AR/
+│   │       │   ├── ReferenceImages/
+│   │       │   └── Scripts/
+│   │       ├── Branding/
+│   │       ├── Education/
+│   │       │   ├── Data/
+│   │       │   ├── Facts/
+│   │       │   └── Scripts/
+│   │       ├── Interaction/
+│   │       ├── Planets/
+│   │       │   ├── Models/
+│   │       │   ├── Prefabs/
+│   │       │   └── Scripts/
+│   │       ├── Scenes/
+│   │       ├── Simulation/
+│   │       └── UI/
 │   ├── Packages/
 │   └── ProjectSettings/
 ├── docs/
 │   └── design/
 ├── AGENTS.md
-├── README.md
-└── .gitignore
+├── LICENSE
+└── README.md
 ```
 
-| Pasta | Finalidade |
-|---|---|
-| `AR` | Image Tracking, referências e scripts de RA |
-| `Planets` | Modelos, prefabs e comportamentos |
-| `Interaction` | Gestos e manipulação |
-| `Education` | Conteúdo educacional configurável |
-| `UI` | Interface e feedback |
-| `Scenes` | Cena principal `MainAR` |
-| `Simulation` | Ambiente XR Simulation |
-| `docs/design` | Especificação e referências Figma |
+Recursos próprios ficam em `UnityApp/Assets/SolarAr`. A cena principal é `UnityApp/Assets/SolarAr/Scenes/MainAR.unity`.
 
 ---
 
-## 13. Principais Scripts e Componentes
-
-| Script / Componente | Responsabilidade |
-|---|---|
-| `TrackedImageDebugLogger.cs` | Registra mudanças de tracking durante desenvolvimento |
-| `TrackedImageHandler.cs` | Processa o ciclo de vida do `ARTrackedImage` e controla a instância |
-| `PlanetRegistry.cs` | Mapeia a imagem de referência para o prefab |
-| `RotationController.cs` | Controla rotação automática do modelo visual |
-| `PlanetContent.cs` | Define dados educacionais de um planeta |
-| `PlanetFact.cs` | Representa uma curiosidade |
-| `PlanetFacts.cs` | Agrupa curiosidades por planeta |
-| `EducationalContentManager.cs` | Fornece conteúdo usando `planetKey` |
-| `ARTrackedImageManager` | Componente AR Foundation de Image Tracking |
-| `SolarARReferenceImageLibrary` | Biblioteca que contém `EarthCard` |
-
----
-
-## 14. Dependências
-
-```text
-AR Foundation 6.6.2
-ARCore XR Plugin 6.6.2
-XR Plug-in Management 4.7.0
-XR Simulation 6.6.2
-glTFast 6.20.0
-Input System 1.20.0
-URP 17.6.0
-```
-
-Registradas em `UnityApp/Packages/manifest.json` e `packages-lock.json`.
-
----
-
-## 15. Configuração do Ambiente
+## 10. Configuração do ambiente
 
 ### Pré-requisitos
 
 - Unity Hub;
 - Unity **6000.6.4f1**;
 - Android Build Support;
-- Android SDK/NDK e OpenJDK;
+- Android SDK & NDK Tools;
+- OpenJDK;
 - Git;
-- smartphone Android compatível com ARCore.
+- smartphone Android compatível com ARCore para teste real.
 
-### Procedimento
+### Instalação
 
 ```bash
 git clone https://github.com/Emilyksori/SolarAR.git
 cd SolarAR
 ```
 
-1. Abra o Unity Hub.
-2. Adicione/abra a pasta `SolarAR/UnityApp`.
-3. Aguarde a importação dos pacotes.
-4. Abra `Assets/SolarAr/Scenes/MainAR.unity`.
-5. Em XR Plug-in Management, confirme ARCore no Android e XR Simulation no Editor/Standalone.
+1. No Unity Hub, abra a pasta `SolarAR/UnityApp`.
+2. Aguarde a importação dos pacotes.
+3. Abra `Assets/SolarAr/Scenes/MainAR.unity`.
+4. Em XR Plug-in Management, confirme:
+   - Android → ARCore Loader;
+   - Editor/Standalone → XR Simulation.
+
+Não é necessário atualizar a versão do Unity nem os pacotes para abrir o estado documentado do projeto.
 
 ---
 
-## 16. Como Executar
+## 11. Como executar
 
-### XR Simulation
+### XR Simulation no Editor
 
 1. Abra `MainAR.unity`.
-2. Confirme `SolarAR_Backyard` nas preferências de XR Simulation.
+2. Verifique se `SolarAR_Backyard` está selecionado nas preferências de XR Simulation.
 3. Clique em **Play**.
 4. Navegue até `EarthCard_Simulated`.
-5. Aponte a câmera simulada para o card.
+5. Aponte a câmera simulada para o card e aguarde o reconhecimento.
 
-### Android
+### Gerar APK Android
 
-1. **File → Build Profiles → Android**.
-2. Confirme `MainAR` no build.
-3. Clique em **Build**.
-4. Salve, por exemplo, em `UnityApp/Builds/Android/SolarAR.apk`.
+1. Abra **File → Build Profiles**.
+2. Selecione **Android**.
+3. Confirme que `MainAR` está incluída.
+4. Clique em **Build**.
+5. Salve, por exemplo, em `UnityApp/Builds/Android/SolarAR.apk`.
 
 Instalação por ADB:
 
@@ -333,189 +326,176 @@ adb install -r UnityApp/Builds/Android/SolarAR.apk
 
 ---
 
-## 17. Como Utilizar a Aplicação
+## 12. Como utilizar
 
 1. Abra o SolarAR no smartphone.
-2. Autorize a câmera.
-3. Posicione o `EarthCard` em uma superfície visível.
-4. Aponte a câmera para o card.
-5. Aguarde o reconhecimento.
-6. Observe a Terra em 3D sobre a referência.
-7. Interaja com o planeta.
-8. Consulte o conteúdo educacional.
-9. Caso o tracking seja perdido, reposicione o card na câmera.
+2. Autorize o acesso à câmera quando solicitado.
+3. Posicione um dos sete cards oficiais em uma superfície visível.
+4. Aponte a câmera para o card e aguarde o reconhecimento.
+5. Observe o planeta correspondente em 3D.
+6. Arraste para rotacionar e use o gesto de pinça para alterar a escala.
+7. Consulte as informações educacionais.
+8. Para trocar de planeta, apresente outro card oficial.
+9. Para usar sem câmera, abra a galeria de planetas.
+10. Caso o tracking seja perdido, reposicione o card na área visível da câmera.
 
 ---
 
-## 18. Fluxo de Funcionamento
+## 13. Interface
 
-```mermaid
-flowchart TD
-    A[Início] --> B[Abrir aplicação]
-    B --> C[Autorizar câmera]
-    C --> D[Procurar EarthCard]
-    D --> E{Card reconhecido?}
-    E -- Não --> D
-    E -- Sim --> F[Mostrar Terra em 3D]
-    F --> G[Rotação e escala]
-    F --> H[Conteúdo educacional]
-    G --> I{Tracking perdido?}
-    H --> I
-    I -- Não --> F
-    I -- Sim --> J[Orientar reenquadramento]
-    J --> D
+A especificação oficial está em [`docs/design/SolarAR-UI-Spec.md`](docs/design/SolarAR-UI-Spec.md). As referências originais exportadas do Figma são:
+
+- `docs/design/figma-styles.jpg`;
+- `docs/design/figma-components.jpg`;
+- `docs/design/figma-screens.jpg`.
+
+A referência utiliza base visual `412 × 915`, fundo noturno, azul e ciano para navegação e feedback, amarelo para destaque, superfícies claras para conteúdo educacional e tipografia com foco em legibilidade. A implementação respeita Safe Area e inclui estados de procura, reconhecimento e perda de tracking.
+
+---
+
+## 14. Testes técnicos registrados
+
+| Teste | Procedimento | Resultado registrado | Status |
+|---|---|---|---|
+| Inicialização | Abrir o aplicativo | Aplicação iniciou | ✅ |
+| Câmera | Iniciar experiência AR | Câmera disponibilizada | ✅ |
+| XR Simulation | Executar `MainAR` no Editor | Ambiente carregado | ✅ |
+| Image Tracking | Apontar para `EarthCard` | Card detectado | ✅ |
+| Conteúdo 3D | Reconhecer `EarthCard` | Terra exibida | ✅ |
+| Tracking | Movimentar e reenquadrar o card | Modelo acompanhou a referência | ✅ |
+| Recuperação | Perder e recuperar a referência | Experiência recuperada | ✅ |
+| Rotação | Exibir e manipular o planeta | Rotação funcionou | ✅ |
+| Escala | Executar gesto de pinça | Escala permaneceu utilizável | ✅ |
+| Conteúdo educacional | Abrir informações | Dados e fatos exibidos | ✅ |
+| Build Android | Gerar APK | APK gerado | ✅ |
+| Android real | Instalar e executar | MVP funcionou | ✅ |
+
+Os resultados acima registram validações realizadas durante o desenvolvimento. A consolidação Git, por si só, não substitui uma nova validação em dispositivo físico dos sete cards.
+
+### Dispositivo testado
+
+| Dispositivo | Sistema | Versão | Resultado |
+|---|---|---|---|
+| Smartphone compatível com ARCore | Android | **Não registrada no README** | MVP executado com sucesso |
+
+Para registrar o dispositivo conectado:
+
+```bash
+adb shell getprop ro.product.manufacturer
+adb shell getprop ro.product.model
+adb shell getprop ro.build.version.release
 ```
 
 ---
 
-## 19. Caso de Uso
+## 15. Evidências de funcionamento
 
-```mermaid
-flowchart LR
-    U((Usuário))
-    U --> A[Iniciar aplicação]
-    U --> B[Autorizar câmera]
-    U --> C[Apontar para EarthCard]
-    U --> D[Visualizar Terra 3D]
-    U --> E[Manipular planeta]
-    U --> F[Consultar conteúdo]
-```
+A solução possui evidência em vídeo do reconhecimento e da interação principal:
 
----
+[▶ Assistir ao vídeo de demonstração](docs/evidencia_reconhecimento_de_card.mp4)
 
-## 20. Fluxo de Navegação
+Capturas adicionais podem ser armazenadas em `docs/images/`, por exemplo:
 
 ```text
-Aplicação
-  ↓
-Experiência AR
-  ↓
-Procurando EarthCard
-  ↓
-Card reconhecido
-  ↓
-Terra em 3D
-  ↓
-Informações educacionais
-  ↓
-Perda / recuperação de tracking
+docs/images/solarar-searching.png
+docs/images/solarar-earth-tracking.png
 ```
 
----
-
-## 21. Interface
-
-A especificação visual está em `docs/design/`, incluindo `SolarAR-UI-Spec.md` e exportações do Figma. A referência usa base `412 × 915`, fundo noturno, azul/ciano para navegação, amarelo para destaque e superfícies claras para conteúdo educacional.
-
-### Capturas reais
-
-Armazene em `docs/images/` pelo menos:
-
-```text
-solarar-searching.png
-solarar-earth-tracking.png
-```
-
-Com smartphone conectado por ADB:
+Com um smartphone conectado por ADB:
 
 ```bash
 mkdir -p docs/images
 adb exec-out screencap -p > docs/images/solarar-earth-tracking.png
 ```
 
-Depois adicione ao README, se os arquivos existirem:
+---
 
-```markdown
-![Terra reconhecida em RA](docs/images/solarar-earth-tracking.png)
-```
+## 16. Limitações conhecidas
+
+- a versão atual implementa sete planetas e não inclui Vênus;
+- o Image Tracking depende da visibilidade e qualidade da imagem de referência;
+- iluminação inadequada pode reduzir a estabilidade do reconhecimento;
+- os cards físicos oficiais medem `60 × 80 mm` e ainda devem ser validados individualmente no aparelho;
+- a interface ainda pode receber refinamentos de fidelidade visual em relação ao Figma;
+- áudio educacional não faz parte desta versão;
+- a compatibilidade foi verificada somente no dispositivo Android utilizado pela equipe;
+- fabricante, modelo e versão do Android ainda precisam ser registrados.
 
 ---
 
-## 22. Testes Técnicos
+## 17. Problemas encontrados e soluções
 
-| Teste | Procedimento | Resultado esperado | Resultado obtido | Status |
-|---|---|---|---|---|
-| Inicialização | Abrir aplicativo | Aplicação inicia | Funcionou | ✅ |
-| Câmera | Iniciar RA | Câmera ativa | Funcionou | ✅ |
-| XR Simulation | Executar `MainAR` | Ambiente carrega | Funcionou | ✅ |
-| Image Tracking | Apontar `EarthCard` | Card reconhecido | Detectado | ✅ |
-| Objeto 3D | Reconhecer card | Terra exibida | Exibida | ✅ |
-| Tracking | Movimentar/enquadrar card | Modelo acompanha referência | Funcionou | ✅ |
-| Recuperação | Perder/recuperar referência | Experiência recupera | Funcionou | ✅ |
-| Rotação | Exibir planeta | Terra gira | Funcionou | ✅ |
-| Escala/interação | Manipular planeta | Escala utilizável | Funcionou | ✅ |
-| Conteúdo educacional | Abrir informações | Conteúdo exibido | Funcionou | ✅ |
-| Build Android | Gerar APK | APK criado | Gerado | ✅ |
-| Android real | Instalar e executar | MVP funciona | Funcionou | ✅ |
+### XR Simulation sem Image Tracking ativo
 
----
+**Problema:** o ambiente simulado aparecia, mas o `ARTrackedImageManager` não recebia eventos.
 
-## 23. Dispositivos Testados
+**Causa:** o Fast Enter Play Mode mantinha o XR loader em estado persistente.
 
-| Dispositivo | Sistema | Versão | Resultado |
-|---|---|---|---|
-| Smartphone Android compatível com ARCore | Android | **Versão não registrada no README** | MVP executado com sucesso |
+**Solução:** restaurar o ciclo completo de Play Mode para reinicializar os subsistemas XR.
 
-> Registrar fabricante, modelo e versão do Android antes da entrega, se disponíveis.
+### Tamanho físico inconsistente
 
----
+**Problema:** `EarthCard_Simulated` utilizava dimensões diferentes da biblioteca.
 
-## 24. Limitações Conhecidas
+**Causa:** imagem simulada configurada como `1 × 1 m`, enquanto os cards oficiais medem `0,06 × 0,08 m`.
 
-- A versão atual implementa apenas o **planeta Terra**.
-- Os demais planetas ainda serão adicionados.
-- O Image Tracking depende de visibilidade e qualidade da referência.
-- Iluminação inadequada pode reduzir a estabilidade.
-- A calibração final pode variar conforme o tamanho físico do card.
-- A interface ainda pode receber refinamentos de fidelidade ao Figma.
-- Áudio educacional não faz parte do MVP atual.
-- A compatibilidade foi verificada apenas no dispositivo efetivamente testado.
+**Solução:** alinhar as dimensões do objeto simulado às cadastradas na biblioteca.
 
----
+### Terra não aparecia após o reconhecimento
 
-## 25. Evidências de Funcionamento
+**Problema:** o tracking detectava `EarthCard`, mas o planeta não era exibido.
 
-A solução foi validada no XR Simulation e em dispositivo Android compatível com ARCore.
+**Causa:** inconsistências na associação e no ciclo de vida controlado por `PlanetRegistry` e `TrackedImageHandler`.
 
-**Demonstração do reconhecimento e interação:**
+**Solução:** revisar `EarthCard → EarthPrefab` e garantir instanciação e ativação nos estados corretos.
 
-[▶ Assistir ao vídeo de demonstração](docs/evidencia_reconhecimento_de_card.mp4)
+### Instabilidade em `Limited`
+
+**Problema:** pequenas oscilações faziam o planeta desaparecer.
+
+**Causa:** a instância era desativada sempre que o estado deixava de ser `Tracking`.
+
+**Solução:** tratar `Limited` como perda temporária e preservar a experiência quando possível.
+
+### Build And Run sem dispositivo
+
+**Problema:** o build foi inicialmente reportado como falha.
+
+**Causa:** uso de **Build And Run** sem Android conectado.
+
+**Solução:** utilizar **Build** para gerar o APK e instalá-lo depois por ADB.
 
 ---
 
-## 26. Repositórios e Recursos
+## 18. Melhorias futuras
 
-| Recurso | Link / Local |
+- validar individualmente os sete cards físicos em mais dispositivos Android;
+- registrar fabricante, modelo e versão do Android testado;
+- adicionar capturas reais em `docs/images/`;
+- expandir o conteúdo educacional somente após aprovação de escopo;
+- refinar a interface para maior fidelidade ao Figma;
+- realizar avaliação exploratória de adequação pedagógica.
+
+---
+
+## 19. Recursos e licença
+
+| Recurso | Link / local |
 |---|---|
 | Código-fonte | https://github.com/Emilyksori/SolarAR |
 | Especificação UI | `docs/design/SolarAR-UI-Spec.md` |
 | Referências Figma | `docs/design/figma-styles.jpg`, `figma-components.jpg`, `figma-screens.jpg` |
 | Cena principal | `UnityApp/Assets/SolarAr/Scenes/MainAR.unity` |
+| Créditos do modelo 3D | `UnityApp/Assets/SolarAr/Planets/Models/CREDITS.md` |
+| Evidência em vídeo | `docs/evidencia_reconhecimento_de_card.mp4` |
+
+Projeto acadêmico desenvolvido para fins educacionais na disciplina **UPX — Realidade Aumentada**, do curso de Engenharia da Computação do Centro Universitário Facens. Os recursos de terceiros permanecem sujeitos às respectivas licenças.
 
 ---
 
-## 27. Cronograma Técnico
+## 20. Controle de versão
 
-| Atividade | Responsável | Status |
-|---|---|---|
-| Planejamento e acompanhamento | Kevin Scavassin | ✅ |
-| Desenvolvimento Unity e integração RA | Emilya Kaori | ✅ |
-| Organização do fluxo | Renan Lara | ✅ |
-| Pesquisa e desenvolvimento | Roberto Dutra | ✅ |
-| XR Simulation | Emilya Kaori | ✅ |
-| Image Tracking da Terra | Emilya Kaori | ✅ |
-| Integração 3D | Equipe | ✅ |
-| Conteúdo educacional | Equipe | ✅ |
-| Testes técnicos | Equipe | ✅ |
-| Build e teste Android | Equipe | ✅ |
-| Outros planetas | Equipe | ⬜ |
-| Refinamento de UI | Equipe | 🚧 |
-
----
-
-## 28. Controle de Versão
-
-O projeto utiliza Git e GitHub, com branches de funcionalidades e commits descritivos seguindo um padrão simplificado de Conventional Commits:
+O projeto utiliza Git e GitHub com branches curtas e commits descritivos baseados em Conventional Commits simplificado:
 
 ```text
 feat: nova funcionalidade
@@ -524,111 +504,22 @@ docs: documentação
 chore: configuração ou manutenção
 ```
 
-O histórico registra a evolução de AR Foundation, XR Simulation, Image Tracking, integração da Terra, conteúdo educacional e MVP Android.
+O histórico registra a evolução de AR Foundation, XR Simulation, Image Tracking, integração da Terra, expansão para sete planetas, conteúdo educacional, UI e MVP Android.
 
 ---
 
-## 29. Problemas Encontrados e Soluções
-
-### XR Simulation sem Image Tracking ativo
-
-**Problema:** ambiente simulado aparecia, mas o `ARTrackedImageManager` não recebia eventos.  
-**Causa:** Fast Enter Play Mode mantinha o XR loader em estado persistente.  
-**Solução:** restaurar o ciclo completo de Play Mode.
-
-### Tamanho físico inconsistente
-
-**Problema:** `EarthCard_Simulated` utilizava dimensão diferente da library.  
-**Causa:** imagem simulada em `1 × 1 m`, referência em aproximadamente `0,10 × 0,106 m`.  
-**Solução:** alinhar as dimensões.
-
-### Terra não aparecia após reconhecimento
-
-**Problema:** tracking detectava `EarthCard`, mas o planeta não aparecia.  
-**Causa:** inconsistências de associação/ciclo de vida no `PlanetRegistry` e `TrackedImageHandler`.  
-**Solução:** revisar `EarthCard → EarthPrefab`, diagnosticar o fluxo e garantir instanciação/ativação correta.
-
-### Instabilidade em `Limited`
-
-**Problema:** pequenas oscilações podiam ocultar o planeta.  
-**Causa:** comportamento inicialmente dependente apenas de `Tracking`.  
-**Solução:** tratar `Limited` como perda temporária e preservar a experiência quando possível.
-
-### Build And Run sem dispositivo
-
-**Problema:** build inicialmente reportado como falha.  
-**Causa:** uso de **Build And Run** sem Android conectado.  
-**Solução:** utilizar **Build** para gerar o APK e instalar depois por ADB.
-
----
-
-## 30. Melhorias Futuras
-
-- adicionar Mercúrio, Vênus, Marte, Júpiter, Saturno, Urano e Netuno;
-- criar os respectivos cards físicos;
-- expandir conteúdo educacional;
-- implementar áudio opcional;
-- refinar a UI conforme o Figma;
-- ampliar testes em diferentes dispositivos Android;
-- realizar avaliação exploratória de adequação pedagógica.
-
----
-
-## 31. Custos e Recursos
-
-| Recurso | Tipo | Custo / Condição |
-|---|---|---|
-| Unity | Software | Licença utilizada no contexto acadêmico |
-| Blender | Software | Gratuito |
-| Git / GitHub | Software / serviço | Gratuito para o uso realizado |
-| Figma | Serviço | Design da interface |
-| Smartphone Android | Hardware | Equipamento da equipe |
-| Computador | Hardware | Equipamento da equipe |
-
----
-
-## 32. Licença
-
-Projeto acadêmico desenvolvido para fins educacionais na disciplina **UPX — Realidade Aumentada**, do curso de Engenharia da Computação do Centro Universitário Facens.
-
-Recursos de terceiros permanecem sujeitos às respectivas licenças.
-
----
-
-## 33. Autores
-
-- **Emilya Kaori** — Tech Lead, Unity, integração de RA e testes
-- **Kevin Scavassin** — PMO e planejamento
-- **Renan Lara** — Scrum Master e organização do fluxo
-- **Roberto Dutra** — pesquisa e desenvolvimento
-
-**Instituição:** Centro Universitário Facens  
-**Curso:** Engenharia da Computação  
-**Disciplina:** UPX — Realidade Aumentada  
-**Semestre:** 2026.2
-
----
-
-## Checklist de Entrega
+## Checklist de entrega
 
 - [x] Código-fonte atualizado
-- [x] README preenchido com o estado atual
-- [x] Versões das tecnologias registradas
-- [x] Arquitetura apresentada
-- [x] Funcionamento da RA explicado
-- [x] Estrutura documentada
-- [x] Scripts principais descritos
-- [x] Configuração documentada
-- [x] Execução documentada
-- [x] Utilização documentada
-- [x] Testes registrados
-- [x] Limitações documentadas
-- [x] Histórico preservado por commits
-- [x] RAs conferidos no README
-- [x] Modelo/versão Android conferidos
-- [ ] Screenshots adicionados em `docs/images/`
-- [ ] Link do repositório conferido no navegador
+- [x] README alinhado ao estado de sete planetas
+- [x] Versões das principais tecnologias registradas
+- [x] Arquitetura e funcionamento de AR documentados
+- [x] Estrutura, scripts, configuração e execução documentados
+- [x] Testes históricos e limitações registrados
+- [x] Evidência em vídeo referenciada
+- [x] RAs dos integrantes conferidos
+- [ ] Fabricante, modelo e versão do Android conferidos
+- [ ] Sete cards físicos revalidados individualmente após a consolidação
+- [ ] Capturas adicionais incluídas em `docs/images/`
 
----
-
-> Este README representa o estágio atual do SolarAR no momento da entrega: um MVP Android funcional com Image Tracking da Terra, modelo 3D interativo, conteúdo educacional e arquitetura preparada para expansão futura.
+> Este README representa o estado consolidado do SolarAR: um MVP Android com sete cards configurados, modelos 3D interativos em AR e sem câmera, conteúdo educacional configurável e interface baseada na especificação oficial do projeto.

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55769819ac12460e96958127f8b79bab, type: 3}
+  m_Name: NeptuneContent
+  m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetContent
+  _planetKey: neptune
+  _displayName: Netuno
+  _orderFromSun: 8
+  _shortDescription: "O planeta mais distante do Sol nesta experi\xEAncia."
+  _educationalSummary: "Netuno \xE9 um gigante de gelo azul, muito frio e com os ventos mais r\xE1pidos observados entre os planetas."
+  _diameterKm: 49528
+  _distanceFromSunMillionKm: 4495
+  _orbitalPeriodDays: 59800
+  _rotationPeriodHours: 16.1
+  _moonCount: 16
+  _averageTemperatureCelsius: -200
+  _thumbnail: {fileID: 21300000, guid: bd46916874da96404a48bfe6bec598c1, type: 3}

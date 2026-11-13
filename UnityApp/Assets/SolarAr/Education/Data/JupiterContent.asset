@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55769819ac12460e96958127f8b79bab, type: 3}
+  m_Name: JupiterContent
+  m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetContent
+  _planetKey: jupiter
+  _displayName: "J\xFApiter"
+  _orderFromSun: 5
+  _shortDescription: O maior planeta do Sistema Solar.
+  _educationalSummary: "J\xFApiter \xE9 um gigante gasoso com faixas de nuvens, tempestades intensas e um enorme conjunto de luas."
+  _diameterKm: 142984
+  _distanceFromSunMillionKm: 778
+  _orbitalPeriodDays: 4333
+  _rotationPeriodHours: 9.9
+  _moonCount: 115
+  _averageTemperatureCelsius: -110
+  _thumbnail: {fileID: 21300000, guid: 077df8760dbb8ab9d956acc06b3497d9, type: 3}

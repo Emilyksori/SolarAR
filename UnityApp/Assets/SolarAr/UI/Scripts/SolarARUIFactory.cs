@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace SolarAR.UI
 {
-    internal static class SolarARColors
+    public static class SolarARColors
     {
         public static readonly Color Night = Hex("0A1433");
         public static readonly Color Ink = Hex("19365B");
@@ -20,6 +20,44 @@ namespace SolarAR.UI
         public static readonly Color FactSun = Hex("FFF4CD");
         public static readonly Color Success = Hex("B6E9C9");
 
+        public static void GetPlanetPalette(
+            string planetKey,
+            out Color primary,
+            out Color secondary)
+        {
+            switch (planetKey)
+            {
+                case "mercury":
+                    primary = Hex("8E8176");
+                    secondary = Hex("D6C2A9");
+                    break;
+                case "mars":
+                    primary = Hex("B95345");
+                    secondary = Hex("E8A094");
+                    break;
+                case "jupiter":
+                    primary = Hex("9A6B4F");
+                    secondary = Hex("D9B18A");
+                    break;
+                case "saturn":
+                    primary = Hex("C99B4A");
+                    secondary = Hex("F0D9A2");
+                    break;
+                case "uranus":
+                    primary = Hex("4DBFD1");
+                    secondary = Hex("A8E4EA");
+                    break;
+                case "neptune":
+                    primary = Hex("244D9B");
+                    secondary = Hex("6B8FE0");
+                    break;
+                default:
+                    primary = Hex("2F80C9");
+                    secondary = Hex("65B96E");
+                    break;
+            }
+        }
+
         private static Color Hex(string value)
         {
             ColorUtility.TryParseHtmlString($"#{value}", out Color color);
@@ -27,7 +65,7 @@ namespace SolarAR.UI
         }
     }
 
-    internal sealed class SolarARUIFactory
+    public sealed class SolarARUIFactory
     {
         private readonly TMP_FontAsset _titleFont;
         private readonly TMP_FontAsset _bodyFont;
@@ -61,11 +99,13 @@ namespace SolarAR.UI
                 RoundedRectangleGraphic graphic = instance.AddComponent<RoundedRectangleGraphic>();
                 graphic.color = color;
                 graphic.Radius = radius;
+                graphic.raycastTarget = false;
             }
             else
             {
                 Image image = instance.AddComponent<Image>();
                 image.color = color;
+                image.raycastTarget = false;
             }
 
             return rect;
@@ -100,10 +140,13 @@ namespace SolarAR.UI
             text.text = value;
             text.font = title ? _titleFont : _bodyFont;
             text.fontSize = fontSize;
+            text.fontWeight = title ? FontWeight.SemiBold : FontWeight.Regular;
             text.color = color;
             text.alignment = alignment;
-            text.fontStyle = style;
-            text.enableWordWrapping = true;
+            text.fontStyle = title && style == FontStyles.Normal ? FontStyles.Bold : style;
+            text.characterSpacing = title ? 0.4f : 0f;
+            text.lineSpacing = title ? -2f : 2f;
+            text.textWrappingMode = TextWrappingModes.Normal;
             text.overflowMode = TextOverflowModes.Truncate;
             text.raycastTarget = false;
             return text;
@@ -123,6 +166,7 @@ namespace SolarAR.UI
             RectTransform rect = Panel(name, parent, background, radius);
             Button button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = rect.GetComponent<Graphic>();
+            button.targetGraphic.raycastTarget = true;
             button.transition = Selectable.Transition.ColorTint;
             ColorBlock colors = button.colors;
             colors.normalColor = Color.white;
@@ -143,7 +187,7 @@ namespace SolarAR.UI
                 foreground,
                 TextAlignmentOptions.Center,
                 title,
-                FontStyles.SemiBold);
+                FontStyles.Bold);
             Stretch(text.rectTransform, 12f, 6f, 12f, 6f);
             return button;
         }

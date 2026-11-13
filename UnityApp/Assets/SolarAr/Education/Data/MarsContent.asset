@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55769819ac12460e96958127f8b79bab, type: 3}
+  m_Name: MarsContent
+  m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetContent
+  _planetKey: mars
+  _displayName: Marte
+  _orderFromSun: 4
+  _shortDescription: Um planeta rochoso e frio, conhecido como planeta vermelho.
+  _educationalSummary: "Marte tem solo rico em ferro, grandes vulc\xF5es e sinais de que \xE1gua l\xEDquida correu por sua superf\xEDcie no passado."
+  _diameterKm: 6780
+  _distanceFromSunMillionKm: 228
+  _orbitalPeriodDays: 687
+  _rotationPeriodHours: 24.6
+  _moonCount: 2
+  _averageTemperatureCelsius: -53
+  _thumbnail: {fileID: 21300000, guid: e3334548f5e6cfa509e05450df996725, type: 3}

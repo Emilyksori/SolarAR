@@ -15,12 +15,12 @@ MonoBehaviour:
   _planetKey: earth
   _displayName: Terra
   _orderFromSun: 3
-  _shortDescription: Nosso planeta, coberto principalmente por água e lar de milhões de espécies.
-  _educationalSummary: A Terra é o terceiro planeta a partir do Sol e o único mundo conhecido com vida. Sua atmosfera e água líquida ajudam a manter condições adequadas para muitos seres vivos.
-  _diameterKm: 12742
-  _distanceFromSunMillionKm: 149.6
+  _shortDescription: "Nosso planeta, coberto principalmente por \xE1gua e cheio de vida."
+  _educationalSummary: "A Terra \xE9 o terceiro planeta a partir do Sol e o \xFAnico mundo conhecido com vida. Sua atmosfera e \xE1gua l\xEDquida ajudam a manter muitos seres vivos."
+  _diameterKm: 12756
+  _distanceFromSunMillionKm: 150.2
   _orbitalPeriodDays: 365.25
-  _rotationPeriodHours: 23.93
+  _rotationPeriodHours: 23.9
   _moonCount: 1
   _averageTemperatureCelsius: 15
-  _thumbnail: {fileID: 0}
+  _thumbnail: {fileID: 21300000, guid: f2f9873e53ae8f4a9a555e33dc2590f7, type: 3}
