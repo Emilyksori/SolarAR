@@ -1,3 +1,4 @@
+using SolarAR.Interaction;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,7 @@ namespace SolarAR.Planets
         [SerializeField] private RawImage _outputImage;
         [SerializeField, Min(128)] private int _textureSize = 512;
         [SerializeField] private int _previewLayer = 30;
+        [SerializeField, Min(0.001f)] private float _previewDiameterMeters = 0.048f;
 
         private GameObject _currentPlanet;
         private RenderTexture _renderTexture;
@@ -45,8 +47,33 @@ namespace SolarAR.Planets
             _currentPlanet = Instantiate(planetPrefab, _previewRoot);
             _currentPlanet.name = planetPrefab.name + " Preview";
             _currentPlanet.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            ConfigureStablePreview(_currentPlanet);
             SetLayerRecursively(_currentPlanet.transform, _previewLayer);
             SetPreviewActive(true);
+        }
+
+        private void ConfigureStablePreview(GameObject instance)
+        {
+            FloatingController floating = instance.GetComponent<FloatingController>();
+            if (floating != null)
+            {
+                floating.enabled = false;
+            }
+
+            PlanetDisplay display = instance.GetComponent<PlanetDisplay>();
+            if (display == null || display.VisualRoot == null)
+            {
+                return;
+            }
+
+            display.VisualRoot.localPosition = Vector3.zero;
+
+            EarthGestureController gestures = instance.GetComponent<EarthGestureController>();
+            if (gestures != null && display.DisplayDiameterMeters > Mathf.Epsilon)
+            {
+                gestures.SetPresentationScale(
+                    _previewDiameterMeters / display.DisplayDiameterMeters);
+            }
         }
 
         public void SetPreviewActive(bool active)

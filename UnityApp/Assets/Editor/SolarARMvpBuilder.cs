@@ -30,7 +30,9 @@ namespace SolarAR.Editor
         private const string EarthModelPath = "Assets/SolarAr/Planets/Models/terra.glb";
         private const float CardWidthMeters = 0.06f;
         private const float CardHeightMeters = 0.08f;
-        private const float DisplayDiameterMeters = 0.048f;
+        private const float DisplayDiameterMeters = 0.058f;
+        private const float VisualOffsetMeters = 0.035f;
+        private const float FloatingAmplitudeMeters = 0.003f;
 
         private sealed class PlanetSpec
         {
@@ -69,8 +71,8 @@ namespace SolarAR.Editor
                 Summary = "Mercúrio é um mundo rochoso coberto por crateras. Ele completa uma volta ao redor do Sol mais rápido que qualquer outro planeta.",
                 DiameterKm = 4879f, DistanceMillionKm = 58f, OrbitalDays = 88f,
                 RotationHours = 1407.6f, Moons = 0, TemperatureCelsius = 167f,
-                FirstFactTitle = "Ano veloz", FirstFact = "Seu ano dura apenas 88 dias terrestres.",
-                SecondFactTitle = "Sem luas", SecondFact = "Mercúrio não possui luas nem anéis."
+                FirstFactTitle = "Um dia gigante", FirstFact = "Do nascer do Sol ao próximo, passam 176 dias da Terra — dois anos de Mercúrio!",
+                SecondFactTitle = "Gelo perto do Sol", SecondFact = "Crateras escuras nos polos guardam gelo, mesmo tão perto do Sol."
             },
             new()
             {
@@ -80,8 +82,8 @@ namespace SolarAR.Editor
                 Summary = "A Terra é o terceiro planeta a partir do Sol e o único mundo conhecido com vida. Sua atmosfera e água líquida ajudam a manter muitos seres vivos.",
                 DiameterKm = 12756f, DistanceMillionKm = 150.2f, OrbitalDays = 365.25f,
                 RotationHours = 23.9f, Moons = 1, TemperatureCelsius = 15f,
-                FirstFactTitle = "Vida", FirstFact = "É o único planeta conhecido que tem vida.",
-                SecondFactTitle = "Nossa Lua", SecondFact = "Tem 1 lua, chamada Lua."
+                FirstFactTitle = "Planeta inquieto", FirstFact = "Os continentes se movem alguns centímetros por ano, quase como unhas crescendo.",
+                SecondFactTitle = "Escudo invisível", SecondFact = "O campo magnético da Terra ajuda a nos proteger das partículas do Sol."
             },
             new()
             {
@@ -91,8 +93,8 @@ namespace SolarAR.Editor
                 Summary = "Marte tem solo rico em ferro, grandes vulcões e sinais de que água líquida correu por sua superfície no passado.",
                 DiameterKm = 6780f, DistanceMillionKm = 228f, OrbitalDays = 687f,
                 RotationHours = 24.6f, Moons = 2, TemperatureCelsius = -53f,
-                FirstFactTitle = "Planeta vermelho", FirstFact = "O ferro do solo dá a Marte sua cor avermelhada.",
-                SecondFactTitle = "Duas luas", SecondFact = "Suas luas pequenas se chamam Fobos e Deimos."
+                FirstFactTitle = "Pôr do sol azul", FirstFact = "Em Marte, o pôr do sol pode parecer azul em vez de vermelho.",
+                SecondFactTitle = "Vulcão gigante", SecondFact = "O Monte Olimpo é um vulcão quase três vezes mais alto que o Everest."
             },
             new()
             {
@@ -102,8 +104,8 @@ namespace SolarAR.Editor
                 Summary = "Júpiter é um gigante gasoso com faixas de nuvens, tempestades intensas e um enorme conjunto de luas.",
                 DiameterKm = 142984f, DistanceMillionKm = 778f, OrbitalDays = 4333f,
                 RotationHours = 9.9f, Moons = 115, TemperatureCelsius = -110f,
-                FirstFactTitle = "Grande Mancha", FirstFact = "A Grande Mancha Vermelha é uma tempestade gigantesca.",
-                SecondFactTitle = "Dia curto", SecondFact = "Um dia em Júpiter dura cerca de 10 horas."
+                FirstFactTitle = "Peso-pesado", FirstFact = "Júpiter tem mais que o dobro da massa de todos os outros planetas juntos.",
+                SecondFactTitle = "Dia relâmpago", SecondFact = "Mesmo sendo enorme, Júpiter completa um giro em cerca de 10 horas."
             },
             new()
             {
@@ -113,8 +115,8 @@ namespace SolarAR.Editor
                 Summary = "Saturno possui milhares de pequenos anéis feitos principalmente de gelo e rocha. É o planeta menos denso do Sistema Solar.",
                 DiameterKm = 120536f, DistanceMillionKm = 1434f, OrbitalDays = 10759f,
                 RotationHours = 10.7f, Moons = 293, TemperatureCelsius = -140f,
-                FirstFactTitle = "Muitos anéis", FirstFact = "Seus anéis são formados por incontáveis pedaços de gelo e rocha.",
-                SecondFactTitle = "Muitas luas", SecondFact = "Saturno possui centenas de luas confirmadas."
+                FirstFactTitle = "Planeta boia", FirstFact = "Saturno é menos denso que a água e boiaria em um oceano grande o bastante.",
+                SecondFactTitle = "Anéis em pedaços", SecondFact = "Seus anéis têm blocos de gelo que vão de grãos minúsculos a montanhas."
             },
             new()
             {
@@ -124,8 +126,8 @@ namespace SolarAR.Editor
                 Summary = "Urano tem metano em sua atmosfera, anéis discretos e uma inclinação tão grande que parece rolar ao redor do Sol.",
                 DiameterKm = 51118f, DistanceMillionKm = 2900f, OrbitalDays = 30687f,
                 RotationHours = -17.2f, Moons = 29, TemperatureCelsius = -195f,
-                FirstFactTitle = "Gira de lado", FirstFact = "Seu eixo é inclinado em quase 98 graus.",
-                SecondFactTitle = "Gigante gelado", SecondFact = "O metano ajuda a dar sua cor azul-esverdeada."
+                FirstFactTitle = "Estações gigantes", FirstFact = "Cada estação em Urano dura cerca de 21 anos terrestres.",
+                SecondFactTitle = "Planeta deitado", SecondFact = "Urano gira quase de lado, como uma bola rolando ao redor do Sol."
             },
             new()
             {
@@ -135,8 +137,8 @@ namespace SolarAR.Editor
                 Summary = "Netuno é um gigante de gelo azul, muito frio e com os ventos mais rápidos observados entre os planetas.",
                 DiameterKm = 49528f, DistanceMillionKm = 4495f, OrbitalDays = 59800f,
                 RotationHours = 16.1f, Moons = 16, TemperatureCelsius = -200f,
-                FirstFactTitle = "Ventos velozes", FirstFact = "Seus ventos podem ser mais rápidos que o som.",
-                SecondFactTitle = "Lua Tritão", SecondFact = "Tritão, sua maior lua, orbita no sentido contrário."
+                FirstFactTitle = "Primeira volta", FirstFact = "Netuno levou 165 anos para completar sua primeira volta desde que foi descoberto.",
+                SecondFactTitle = "Ventos supersônicos", SecondFact = "Seus ventos passam de 2.000 km/h e são os mais rápidos entre os planetas."
             }
         };
 
@@ -151,6 +153,21 @@ namespace SolarAR.Editor
             try
             {
                 BuildAll();
+                EditorApplication.Exit(0);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                EditorApplication.Exit(1);
+            }
+        }
+
+        public static void ValidateAllAndExit()
+        {
+            try
+            {
+                AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                ValidateAll();
                 EditorApplication.Exit(0);
             }
             catch (Exception exception)
@@ -356,12 +373,14 @@ namespace SolarAR.Editor
             }
 
             visualRoot.localScale = Vector3.one * (DisplayDiameterMeters / sourceDiameter);
+            visualRoot.localPosition = Vector3.up * VisualOffsetMeters;
 
             PlanetDisplay display = root.AddComponent<PlanetDisplay>();
             SerializedObject displayData = new(display);
             SetString(displayData, "_planetKey", planet.Key);
             SetObject(displayData, "_visualRoot", visualRoot);
             SetFloat(displayData, "_displayDiameterMeters", DisplayDiameterMeters);
+            SetFloat(displayData, "_visualOffsetMeters", VisualOffsetMeters);
             displayData.ApplyModifiedPropertiesWithoutUndo();
 
             RotationController rotation = root.AddComponent<RotationController>();
@@ -371,6 +390,13 @@ namespace SolarAR.Editor
             SetFloat(rotationData, "_rotationSpeedDegreesPerSecond", 10f);
             rotationData.FindProperty("_autoRotate").boolValue = true;
             rotationData.ApplyModifiedPropertiesWithoutUndo();
+
+            FloatingController floating = root.AddComponent<FloatingController>();
+            SerializedObject floatingData = new(floating);
+            SetObject(floatingData, "_floatTarget", visualRoot);
+            SetFloat(floatingData, "_amplitudeMeters", FloatingAmplitudeMeters);
+            SetFloat(floatingData, "_cyclesPerSecond", 0.3f);
+            floatingData.ApplyModifiedPropertiesWithoutUndo();
 
             EarthGestureController gestures = root.AddComponent<EarthGestureController>();
             SerializedObject gestureData = new(gestures);
@@ -443,6 +469,7 @@ namespace SolarAR.Editor
             ValidateLibrary(errors);
             ValidatePrefabs(errors);
             ValidateSceneData(errors);
+            ValidateTrackingLifecycle(errors);
             SolarARUIBuilder.ValidateScene();
 
             if (errors.Count > 0)
@@ -453,7 +480,7 @@ namespace SolarAR.Editor
 
             Debug.Log(
                 "[SolarAR MVP Validation] PASS: 7 cards, 7 normalized prefabs, 7 educational entries, " +
-                "registry mappings, preview UI and MainAR references are valid.");
+                "registry mappings, sequential tracking lifecycle, preview UI and MainAR references are valid.");
         }
 
         private static void ValidateLibrary(List<string> errors)
@@ -503,9 +530,21 @@ namespace SolarAR.Editor
                 PlanetDisplay display = prefab.GetComponent<PlanetDisplay>();
                 EarthGestureController gestures = prefab.GetComponent<EarthGestureController>();
                 RotationController rotation = prefab.GetComponent<RotationController>();
-                if (display == null || display.VisualRoot == null || gestures == null || rotation == null)
+                FloatingController floating = prefab.GetComponent<FloatingController>();
+                if (display == null || display.VisualRoot == null || gestures == null ||
+                    rotation == null || floating == null)
                 {
-                    errors.Add($"{prefab.name} is missing display, gesture, rotation, or VisualRoot configuration.");
+                    errors.Add(
+                        $"{prefab.name} is missing display, gesture, rotation, floating, " +
+                        "or VisualRoot configuration.");
+                }
+                else if (Mathf.Abs(display.VisualOffsetMeters - VisualOffsetMeters) > 0.0001f ||
+                         Vector3.Distance(
+                             display.VisualRoot.localPosition,
+                             Vector3.up * VisualOffsetMeters) > 0.0001f)
+                {
+                    errors.Add(
+                        $"{prefab.name} visual offset must be {VisualOffsetMeters:0.###} m.");
                 }
 
                 float diameter = MeasurePrefabDiameter(prefab);
@@ -525,6 +564,14 @@ namespace SolarAR.Editor
                     .GetComponent<EducationalContentManager>();
             ARTrackedImageManager imageManager =
                 FindSceneObject(scene, "XR Origin").GetComponent<ARTrackedImageManager>();
+            TrackedImageHandler handler =
+                FindSceneObject(scene, "XR Origin").GetComponent<TrackedImageHandler>();
+
+            SerializedObject registryData = new(registry);
+            if (registryData.FindProperty("_planets").arraySize != Planets.Length)
+            {
+                errors.Add("PlanetRegistry must contain exactly seven mappings.");
+            }
 
             foreach (PlanetSpec planet in Planets)
             {
@@ -544,6 +591,27 @@ namespace SolarAR.Editor
             if (imageManager.requestedMaxNumberOfMovingImages != 1)
             {
                 errors.Add("ARTrackedImageManager must keep Max Moving Images set to 1.");
+            }
+
+            if (!imageManager.enabled || handler == null || !handler.enabled)
+            {
+                errors.Add("ARTrackedImageManager and TrackedImageHandler must remain enabled.");
+            }
+
+            if (imageManager.referenceLibrary is not XRReferenceImageLibrary serializedLibrary ||
+                AssetDatabase.GetAssetPath(serializedLibrary) != LibraryPath)
+            {
+                errors.Add("ARTrackedImageManager must use SolarARReferenceImageLibrary.");
+            }
+
+            ARSession arSession = FindSceneObject(scene, "AR Session").GetComponent<ARSession>();
+            GameObject arCameraObject = FindSceneObject(scene, "Main Camera");
+            Camera arCamera = arCameraObject.GetComponent<Camera>();
+            ARCameraManager arCameraManager = arCameraObject.GetComponent<ARCameraManager>();
+            if (arSession == null || !arSession.enabled || arCamera == null || !arCamera.enabled ||
+                arCameraManager == null || !arCameraManager.enabled)
+            {
+                errors.Add("AR Session, AR Camera and ARCameraManager must remain enabled.");
             }
 
             GameObject planetsScreen = FindSceneObject(scene, "03_Planetas");
@@ -572,6 +640,25 @@ namespace SolarAR.Editor
             ValidateButtonMethod(detailScreen, "Previous Button", "ShowPreviousPlanet", errors);
             ValidateButtonMethod(detailScreen, "Next Button", "ShowNextPlanet", errors);
 
+            GameObject permissionScreen = FindSceneObject(scene, "01b_Permissao_Camera");
+            ValidateButtonMethod(
+                permissionScreen,
+                "Open Camera Button",
+                "RequestCameraPermission",
+                errors);
+
+            GameObject recognizedScreen = FindSceneObject(scene, "02b_Reconhecido");
+            ValidateButtonMethod(
+                recognizedScreen,
+                "Curiosity Mascot Button",
+                "ToggleCuriosities",
+                errors);
+            ValidateButtonMethod(
+                recognizedScreen,
+                "Close Curiosities Button",
+                "CloseCuriosities",
+                errors);
+
             PlanetPreviewController preview =
                 FindSceneObject(scene, "PlanetPreviewSystem").GetComponent<PlanetPreviewController>();
             SerializedObject previewData = new(preview);
@@ -594,6 +681,10 @@ namespace SolarAR.Editor
             {
                 if (text.text.Contains("Ouvir (opcional)", StringComparison.Ordinal) ||
                     text.text.Contains("Use com a câmera do celular", StringComparison.Ordinal) ||
+                    text.text.Contains("Não tiramos nem guardamos fotos", StringComparison.Ordinal) ||
+                    text.text.Contains("Podemos usar a câmera?", StringComparison.Ordinal) ||
+                    text.text.Contains("Toque na lua para abrir a câmera", StringComparison.Ordinal) ||
+                    text.text.Contains("Toque no planeta para saber mais", StringComparison.Ordinal) ||
                     text.text.Contains("Vênus", StringComparison.Ordinal))
                 {
                     errors.Add($"Forbidden or out-of-scope UI text found on '{text.name}': {text.text}");
@@ -612,6 +703,29 @@ namespace SolarAR.Editor
                         }
                     }
                 }
+            }
+        }
+
+        private static void ValidateTrackingLifecycle(List<string> errors)
+        {
+            TrackedImageHandler.ActiveImageState state = new();
+            TrackableId earthTrackable = new(1ul, 1ul);
+            TrackableId marsTrackable = new(2ul, 2ul);
+
+            bool earthActivated = state.Activate("EarthCard", earthTrackable);
+            bool earthReleasedWithoutRemoval = state.ClearIfActive(
+                "EarthCard",
+                earthTrackable);
+            bool marsActivated = state.Activate("MarsCard", marsTrackable);
+            bool staleEarthClearedMars = state.ClearIfActive("EarthCard", earthTrackable);
+
+            if (!earthActivated || !earthReleasedWithoutRemoval || !marsActivated ||
+                staleEarthClearedMars || state.ReferenceImageName != "MarsCard" ||
+                state.TrackableId != marsTrackable)
+            {
+                errors.Add(
+                    "Sequential tracking lifecycle must release Limited/None cards without " +
+                    "waiting for removed and must prioritize the next Tracking card.");
             }
         }
 

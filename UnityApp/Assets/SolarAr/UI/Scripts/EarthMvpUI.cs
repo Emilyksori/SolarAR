@@ -77,6 +77,16 @@ namespace SolarAR.UI
         [SerializeField] private TMP_Text _firstFactText;
         [SerializeField] private TMP_Text _secondFactText;
 
+        [Header("Recognized card curiosities")]
+        [SerializeField] private TMP_Text _recognizedPlanetNameText;
+        [SerializeField] private TMP_Text _recognizedFirstFactText;
+        [SerializeField] private TMP_Text _recognizedSecondFactText;
+        [SerializeField] private GameObject _curiosityPanel;
+        [SerializeField] private GameObject _curiosityPrompt;
+        [SerializeField] private Graphic _curiosityAccent;
+        [SerializeField] private Graphic _curiosityFirstFactBackground;
+        [SerializeField] private Graphic _curiositySecondFactBackground;
+
         [Header("Planet detail")]
         [SerializeField] private TMP_Text _detailPlanetNameText;
         [SerializeField] private TMP_Text _detailPanelNameText;
@@ -92,6 +102,7 @@ namespace SolarAR.UI
         private Coroutine _exploreIntroduction;
         private bool _arFlowActive;
         private bool _hasRecognizedCard;
+        private bool _curiositiesOpen;
         private int _selectedPlanetIndex = 1;
 
 #if UNITY_ANDROID
@@ -150,7 +161,6 @@ namespace SolarAR.UI
             _permissionCallbacks = new PermissionCallbacks();
             _permissionCallbacks.PermissionGranted += OnCameraPermissionGranted;
             _permissionCallbacks.PermissionDenied += OnCameraPermissionDenied;
-            _permissionCallbacks.PermissionDeniedAndDontAskAgain += OnCameraPermissionDenied;
             Permission.RequestUserPermission(Permission.Camera, _permissionCallbacks);
 #else
             EnterArExperience();
@@ -172,6 +182,7 @@ namespace SolarAR.UI
         public void ShowPlanets()
         {
             StopExploreIntroduction();
+            SetCuriositiesOpen(false);
             _arFlowActive = false;
             ShowScreen(ScreenId.Planets);
         }
@@ -222,6 +233,7 @@ namespace SolarAR.UI
         public void BackToOnboarding()
         {
             StopExploreIntroduction();
+            SetCuriositiesOpen(false);
             _arFlowActive = false;
             _hasRecognizedCard = false;
             ShowScreen(ScreenId.Onboarding);
@@ -243,12 +255,33 @@ namespace SolarAR.UI
             }
             else
             {
-                ShowScreen(_hasRecognizedCard ? ScreenId.Lost : ScreenId.Searching);
+                ShowScreen(
+                    _trackingStatus == TrackedImageHandler.TrackedImageStatus.Limited &&
+                    _hasRecognizedCard
+                        ? ScreenId.Lost
+                        : ScreenId.Searching);
             }
+        }
+
+        public void ToggleCuriosities()
+        {
+            if (_currentScreen != ScreenId.Recognized ||
+                _trackingStatus != TrackedImageHandler.TrackedImageStatus.Tracking)
+            {
+                return;
+            }
+
+            SetCuriositiesOpen(!_curiositiesOpen);
+        }
+
+        public void CloseCuriosities()
+        {
+            SetCuriositiesOpen(false);
         }
 
         private void EnterArExperience()
         {
+            SetCuriositiesOpen(false);
             _arFlowActive = true;
             _hasRecognizedCard = false;
             ShowScreen(ScreenId.Explore);
@@ -304,10 +337,15 @@ namespace SolarAR.UI
 
             if (status == TrackedImageHandler.TrackedImageStatus.Tracking)
             {
+                SetCuriositiesOpen(false);
+                bool planetChanged = !string.Equals(
+                    _planetKey,
+                    trackedPlanetKey,
+                    System.StringComparison.Ordinal);
                 _planetKey = trackedPlanetKey;
                 PopulateArEducationalPanel(_planetKey);
                 _hasRecognizedCard = true;
-                if (_currentScreen != ScreenId.Information)
+                if (_currentScreen != ScreenId.Information || planetChanged)
                 {
                     ShowScreen(ScreenId.Recognized);
                 }
@@ -315,7 +353,11 @@ namespace SolarAR.UI
                 return;
             }
 
-            ShowScreen(_hasRecognizedCard ? ScreenId.Lost : ScreenId.Searching);
+            SetCuriositiesOpen(false);
+            ShowScreen(
+                status == TrackedImageHandler.TrackedImageStatus.Limited && _hasRecognizedCard
+                    ? ScreenId.Lost
+                    : ScreenId.Searching);
         }
 
         private void PopulateArEducationalPanel(string planetKey)
@@ -325,6 +367,36 @@ namespace SolarAR.UI
                 _planetNameText,
                 _firstFactText,
                 _secondFactText);
+
+            PopulateEducationalPanel(
+                planetKey,
+                _recognizedPlanetNameText,
+                _recognizedFirstFactText,
+                _recognizedSecondFactText);
+
+            UpdateCuriosityPalette(planetKey);
+        }
+
+        private void UpdateCuriosityPalette(string planetKey)
+        {
+            SolarARColors.GetPlanetPalette(planetKey, out Color primary, out Color secondary);
+
+            if (_curiosityAccent != null)
+            {
+                _curiosityAccent.color = primary;
+            }
+
+            if (_curiosityFirstFactBackground != null)
+            {
+                _curiosityFirstFactBackground.color =
+                    Color.Lerp(primary, SolarARColors.Panel, 0.72f);
+            }
+
+            if (_curiositySecondFactBackground != null)
+            {
+                _curiositySecondFactBackground.color =
+                    Color.Lerp(secondary, SolarARColors.Panel, 0.58f);
+            }
         }
 
         private void PopulateDetailPanel(string planetKey)
@@ -340,6 +412,18 @@ namespace SolarAR.UI
                 _detailPlanetNameText != null)
             {
                 _detailPlanetNameText.text = content.DisplayName;
+            }
+        }
+
+        private void SetCuriositiesOpen(bool open)
+        {
+            _curiositiesOpen = open;
+            SetScreenActive(_curiosityPanel, open);
+            SetScreenActive(_curiosityPrompt, !open);
+
+            if (_trackedImageHandler != null)
+            {
+                _trackedImageHandler.SetActivePlanetPresentationScale(open ? 0.78f : 1f);
             }
         }
 
@@ -381,6 +465,11 @@ namespace SolarAR.UI
 
         private void ShowScreen(ScreenId screen)
         {
+            if (screen != ScreenId.Recognized && _curiositiesOpen)
+            {
+                SetCuriositiesOpen(false);
+            }
+
             _currentScreen = screen;
 
             SetScreenActive(_onboardingScreen, screen == ScreenId.Onboarding);
@@ -508,7 +597,6 @@ namespace SolarAR.UI
 
             _permissionCallbacks.PermissionGranted -= OnCameraPermissionGranted;
             _permissionCallbacks.PermissionDenied -= OnCameraPermissionDenied;
-            _permissionCallbacks.PermissionDeniedAndDontAskAgain -= OnCameraPermissionDenied;
             _permissionCallbacks = null;
         }
 #endif

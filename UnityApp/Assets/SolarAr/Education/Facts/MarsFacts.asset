@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: mars
   _facts:
-  - _title: Planeta vermelho
-    _description: "O ferro do solo d\xE1 a Marte sua cor avermelhada."
-  - _title: Duas luas
-    _description: Suas luas pequenas se chamam Fobos e Deimos.
+  - _title: "P\xF4r do sol azul"
+    _description: "Em Marte, o p\xF4r do sol pode parecer azul em vez de vermelho."
+  - _title: "Vulc\xE3o gigante"
+    _description: "O Monte Olimpo \xE9 um vulc\xE3o quase tr\xEAs vezes mais alto que o Everest."

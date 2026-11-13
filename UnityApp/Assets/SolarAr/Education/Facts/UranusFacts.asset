@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: uranus
   _facts:
-  - _title: Gira de lado
-    _description: "Seu eixo \xE9 inclinado em quase 98 graus."
-  - _title: Gigante gelado
-    _description: O metano ajuda a dar sua cor azul-esverdeada.
+  - _title: "Esta\xE7\xF5es gigantes"
+    _description: "Cada esta\xE7\xE3o em Urano dura cerca de 21 anos terrestres."
+  - _title: Planeta deitado
+    _description: Urano gira quase de lado, como uma bola rolando ao redor do Sol.

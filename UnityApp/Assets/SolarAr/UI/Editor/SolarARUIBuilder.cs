@@ -23,10 +23,14 @@ namespace SolarAR.Editor
         private const string FontFolder = "Assets/SolarAr/UI/Fonts";
         private const string PrefabFolder = "Assets/SolarAr/UI/Prefabs";
         private const string LogoPath = "Assets/SolarAr/Branding/SolarARLogo.png";
+        private const string CuriosityMoonPath =
+            "Assets/SolarAr/UI/Illustrations/CuriosityMoon.png";
         private const string CardFolder = "Assets/SolarAr/AR/ReferenceImages";
 
         private const string BottomNavigationPath = PrefabFolder + "/BottomNavigation.prefab";
         private const string EducationalPanelPath = PrefabFolder + "/EducationalPanel.prefab";
+        private const string TitleFontAssetPath = FontFolder + "/Fredoka-SolarAR.asset";
+        private const string BodyFontAssetPath = FontFolder + "/Nunito-SolarAR.asset";
         private const string UiCharacterSet =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" +
             "ÁÀÂÃÉÊÍÓÔÕÚÇáàâãéêíóôõúç" +
@@ -34,6 +38,7 @@ namespace SolarAR.Editor
 
         private static SolarARUIFactory _ui;
         private static Texture2D _logoTexture;
+        private static Texture2D _curiosityMoonTexture;
         private static readonly string[] PlanetKeys =
         {
             "mercury", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"
@@ -73,6 +78,14 @@ namespace SolarAR.Editor
             public TMP_Text PlanetName;
             public TMP_Text FirstFact;
             public TMP_Text SecondFact;
+            public TMP_Text RecognizedPlanetName;
+            public TMP_Text RecognizedFirstFact;
+            public TMP_Text RecognizedSecondFact;
+            public GameObject CuriosityPanel;
+            public GameObject CuriosityPrompt;
+            public Graphic CuriosityAccent;
+            public Graphic CuriosityFirstFactBackground;
+            public Graphic CuriositySecondFactBackground;
             public TMP_Text DetailPlanetName;
             public TMP_Text DetailPanelName;
             public TMP_Text DetailFirstFact;
@@ -274,6 +287,14 @@ namespace SolarAR.Editor
                     "_planetNameText",
                     "_firstFactText",
                     "_secondFactText",
+                    "_recognizedPlanetNameText",
+                    "_recognizedFirstFactText",
+                    "_recognizedSecondFactText",
+                    "_curiosityPanel",
+                    "_curiosityPrompt",
+                    "_curiosityAccent",
+                    "_curiosityFirstFactBackground",
+                    "_curiositySecondFactBackground",
                     "_detailPlanetNameText",
                     "_detailPanelNameText",
                     "_detailFirstFactText",
@@ -316,6 +337,41 @@ namespace SolarAR.Editor
                         errors.Add("UIBackgroundCamera must not have an AudioListener.");
                     }
                 }
+            }
+
+            foreach (TMP_Text text in UnityEngine.Object.FindObjectsByType<TMP_Text>(
+                         FindObjectsInactive.Include))
+            {
+                string fontPath = AssetDatabase.GetAssetPath(text.font);
+                if (fontPath != TitleFontAssetPath && fontPath != BodyFontAssetPath)
+                {
+                    errors.Add($"Unexpected font on {GetHierarchyPath(text.transform)}: {fontPath}.");
+                }
+            }
+
+            RawImage[] rawImages = UnityEngine.Object.FindObjectsByType<RawImage>(
+                FindObjectsInactive.Include);
+            int curiosityMoonCount = 0;
+            foreach (RawImage rawImage in rawImages)
+            {
+                if (rawImage.name != "Curiosity Moon Artwork" &&
+                    rawImage.name != "Journal Moon Mascot")
+                {
+                    continue;
+                }
+
+                curiosityMoonCount++;
+                if (AssetDatabase.GetAssetPath(rawImage.texture) != CuriosityMoonPath)
+                {
+                    errors.Add(
+                        $"Curiosity mascot must use the official asset: {CuriosityMoonPath}.");
+                }
+            }
+
+            if (curiosityMoonCount != 2)
+            {
+                errors.Add(
+                    $"Expected two official curiosity moon images, found {curiosityMoonCount}.");
             }
 
             foreach (GameObject root in scene.GetRootGameObjects())
@@ -390,10 +446,10 @@ namespace SolarAR.Editor
 
             TMP_FontAsset titleFont = EnsureFontAsset(
                 FontFolder + "/Fredoka-Variable.ttf",
-                FontFolder + "/Fredoka-SolarAR.asset");
+                TitleFontAssetPath);
             TMP_FontAsset bodyFont = EnsureFontAsset(
                 FontFolder + "/Nunito-Variable.ttf",
-                FontFolder + "/Nunito-SolarAR.asset");
+                BodyFontAssetPath);
 
             if (titleFont == null || bodyFont == null)
             {
@@ -405,6 +461,13 @@ namespace SolarAR.Editor
             if (_logoTexture == null)
             {
                 throw new InvalidOperationException($"Official SolarAR logo not found: {LogoPath}");
+            }
+
+            _curiosityMoonTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(CuriosityMoonPath);
+            if (_curiosityMoonTexture == null)
+            {
+                throw new InvalidOperationException(
+                    $"Official curiosity moon not found: {CuriosityMoonPath}");
             }
 
             _planetTextures = new Texture2D[PlanetCardFiles.Length];
@@ -757,7 +820,17 @@ namespace SolarAR.Editor
             SolarARUIFactory.Stretch(arScreen);
             references.Explore = BuildExplore(arScreen, controller);
             references.Searching = BuildSearching(arScreen, controller);
-            references.Recognized = BuildRecognized(arScreen, controller);
+            references.Recognized = BuildRecognized(
+                arScreen,
+                controller,
+                out references.RecognizedPlanetName,
+                out references.RecognizedFirstFact,
+                out references.RecognizedSecondFact,
+                out references.CuriosityPanel,
+                out references.CuriosityPrompt,
+                out references.CuriosityAccent,
+                out references.CuriosityFirstFactBackground,
+                out references.CuriositySecondFactBackground);
             references.Information = BuildInformation(
                 arScreen,
                 controller,
@@ -984,45 +1057,62 @@ namespace SolarAR.Editor
             BuildHeader(root, "Vamos explorar?", controller.BackToOnboarding, null);
 
             RectTransform card = _ui.Panel("Permission Card", root, SolarARColors.Panel, 28f);
-            SolarARUIFactory.Top(card, 128f, 586f, 32f, 32f);
+            SolarARUIFactory.Top(card, 112f, 640f, 24f, 24f);
 
-            CreateSimpleIcon(card, "Camera Icon", "▣", 40f, 64f);
-            AddText(
-                card,
-                "Title",
-                "Podemos usar a câmera?",
-                28f,
-                112f,
-                72f,
-                32f,
-                32f,
-                true,
-                SolarARColors.Ink);
+            BuildCameraIllustration(card, 40f);
+
             explanation = AddText(
                 card,
                 "Explanation",
                 "Para ver os planetas em 3D, o SolarAR precisa enxergar seus cards.",
                 18f,
-                198f,
-                80f,
+                212f,
+                72f,
                 32f,
                 32f,
                 false,
                 SolarARColors.Ink,
                 TextAlignmentOptions.Center,
-                FontStyles.Bold);
+                FontStyles.Normal);
 
-            RectTransform privacy = _ui.Panel(
-                "Privacy Notice",
+            AddText(
+                card,
+                "Camera Support",
+                "A câmera encontra o card e traz o planeta para perto de você.",
+                16f,
+                300f,
+                48f,
+                32f,
+                32f,
+                false,
+                SolarARColors.Ink);
+
+            Button openCamera = AddButton(
+                card,
+                "Open Camera Button",
+                "Abrir câmera",
+                SolarARColors.Secondary,
+                SolarARColors.Ink,
+                372f,
+                64f,
+                48f,
+                48f,
+                24f,
+                20f,
+                true);
+            Wire(openCamera, controller.RequestCameraPermission);
+
+            RectTransform alternative = _ui.Panel(
+                "Gallery Alternative",
                 card,
                 SolarARColors.Secondary,
                 20f);
-            SolarARUIFactory.Top(privacy, 294f, 72f, 24f, 24f);
+            SolarARUIFactory.Top(alternative, 468f, 72f, 24f, 24f);
             AddText(
-                privacy,
-                "Privacy Text",
-                "Não tiramos nem guardamos fotos.",
-                16f,
+                alternative,
+                "Alternative Text",
+                "Você também pode conhecer os planetas sem usar a câmera.",
+                15f,
                 8f,
                 56f,
                 16f,
@@ -1032,25 +1122,13 @@ namespace SolarAR.Editor
                 TextAlignmentOptions.Center,
                 FontStyles.Bold);
 
-            Button allow = AddButton(
-                card,
-                "Allow Camera Button",
-                "Permitir câmera",
-                SolarARColors.Secondary,
-                SolarARColors.Ink,
-                390f,
-                56f,
-                24f,
-                24f);
-            Wire(allow, controller.RequestCameraPermission);
-
             AddText(
                 root,
                 "Footer",
-                "Você também pode conhecer os planetas sem usar a câmera.",
-                15f,
-                744f,
-                56f,
+                "Uma aventura segura e no seu ritmo.",
+                14f,
+                776f,
+                40f,
                 48f,
                 48f,
                 false,
@@ -1258,7 +1336,17 @@ namespace SolarAR.Editor
             return root.gameObject;
         }
 
-        private static GameObject BuildRecognized(RectTransform parent, EarthMvpUI controller)
+        private static GameObject BuildRecognized(
+            RectTransform parent,
+            EarthMvpUI controller,
+            out TMP_Text planetName,
+            out TMP_Text firstFact,
+            out TMP_Text secondFact,
+            out GameObject curiosityPanel,
+            out GameObject curiosityPrompt,
+            out Graphic accent,
+            out Graphic firstFactBackground,
+            out Graphic secondFactBackground)
         {
             RectTransform root = CreateScreen("02b_Reconhecido", parent);
             BuildHeader(root, string.Empty, controller.BackToOnboarding, controller.ShowInstructions);
@@ -1280,21 +1368,210 @@ namespace SolarAR.Editor
                 FontStyles.Bold);
             CreateCheckMark(chip);
 
-            Button information = AddButton(
+            RectTransform journal = _ui.Panel(
+                "Moon Curiosity Journal",
                 root,
-                "Information Prompt",
-                "Toque no planeta para saber mais",
+                SolarARColors.Panel,
+                28f);
+            SolarARUIFactory.Bottom(journal, 96f, 400f, 16f, 16f);
+            curiosityPanel = journal.gameObject;
+
+            SolarARColors.GetPlanetPalette("earth", out Color earthBlue, out Color earthGreen);
+            RectTransform accentBar = _ui.Panel(
+                "Planet Accent",
+                journal,
+                earthBlue,
+                5f);
+            SolarARUIFactory.Top(accentBar, 0f, 10f, 0f, 0f);
+            accent = accentBar.GetComponent<Graphic>();
+
+            AddText(
+                journal,
+                "Editorial Label",
+                "CADERNO DE BORDO  •  CURIOSIDADES",
+                12f,
+                24f,
+                24f,
+                24f,
+                64f,
+                false,
                 SolarARColors.Blue4,
-                SolarARColors.OnDark,
-                0f,
+                TextAlignmentOptions.MidlineLeft,
+                FontStyles.Bold);
+            planetName = AddText(
+                journal,
+                "Recognized Planet Name",
+                "Terra",
+                28f,
+                52f,
+                42f,
+                24f,
+                64f,
+                true,
+                SolarARColors.Ink,
+                TextAlignmentOptions.MidlineLeft,
+                FontStyles.Bold);
+
+            RectTransform journalMoon = CreateCuriosityMoonArtwork(
+                journal,
+                "Journal Moon Mascot");
+            SolarARUIFactory.Place(
+                journalMoon,
+                -70f,
+                -8f,
+                42f,
                 56f,
-                32f,
-                32f,
+                Vector2.one,
+                Vector2.one);
+
+            Button close = _ui.IconButton(
+                "Close Curiosities Button",
+                journal,
+                "×",
+                null,
+                SolarARColors.Panel,
+                SolarARColors.Blue1,
+                48f);
+            SolarARUIFactory.Place(
+                close.GetComponent<RectTransform>(),
+                -12f,
+                -16f,
+                48f,
+                48f,
+                Vector2.one,
+                Vector2.one);
+            Wire(close, controller.CloseCuriosities);
+
+            RectTransform firstCard = _ui.Panel(
+                "Recognized First Fact Card",
+                journal,
+                Color.Lerp(earthBlue, SolarARColors.Panel, 0.72f),
+                18f);
+            SolarARUIFactory.Place(
+                firstCard,
+                16f,
+                -104f,
+                348f,
+                108f,
+                new Vector2(0f, 1f),
+                new Vector2(0f, 1f));
+            firstFactBackground = firstCard.GetComponent<Graphic>();
+            firstFact = _ui.Text(
+                "Recognized First Fact Text",
+                firstCard,
+                "É o único planeta conhecido que tem vida.",
+                17f,
+                SolarARColors.Ink,
+                TextAlignmentOptions.MidlineLeft,
+                false,
+                FontStyles.Bold);
+            SolarARUIFactory.Stretch(firstFact.rectTransform, 18f, 12f, 18f, 12f);
+
+            RectTransform secondCard = _ui.Panel(
+                "Recognized Second Fact Card",
+                journal,
+                Color.Lerp(earthGreen, SolarARColors.Panel, 0.58f),
+                18f);
+            SolarARUIFactory.Place(
+                secondCard,
+                16f,
+                -224f,
+                348f,
+                108f,
+                new Vector2(0f, 1f),
+                new Vector2(0f, 1f));
+            secondFactBackground = secondCard.GetComponent<Graphic>();
+            secondFact = _ui.Text(
+                "Recognized Second Fact Text",
+                secondCard,
+                "Tem 1 lua, chamada Lua.",
+                17f,
+                SolarARColors.Ink,
+                TextAlignmentOptions.MidlineLeft,
+                false,
+                FontStyles.Bold);
+            SolarARUIFactory.Stretch(secondFact.rectTransform, 18f, 12f, 18f, 12f);
+
+            AddText(
+                journal,
+                "Interaction Hint",
+                "Arraste em qualquer direção • Use a pinça para aproximar",
+                12f,
+                352f,
                 24f,
                 16f,
-                true);
-            SolarARUIFactory.Bottom(information.GetComponent<RectTransform>(), 96f, 56f, 32f, 32f);
-            Wire(information, controller.ShowInformation);
+                16f,
+                false,
+                SolarARColors.Blue4,
+                TextAlignmentOptions.Center,
+                FontStyles.Bold);
+
+            RectTransform prompt = _ui.Rect("Curiosity Prompt", root);
+            SolarARUIFactory.Stretch(prompt);
+            curiosityPrompt = prompt.gameObject;
+
+            Button mascot = _ui.Button(
+                "Curiosity Mascot Button",
+                prompt,
+                string.Empty,
+                Color.clear,
+                SolarARColors.Ink,
+                null,
+                48f,
+                1f);
+            SolarARUIFactory.Place(
+                mascot.GetComponent<RectTransform>(),
+                20f,
+                106f,
+                96f,
+                128f,
+                new Vector2(0f, 0f),
+                new Vector2(0f, 0f));
+            RectTransform mascotArtwork = CreateCuriosityMoonArtwork(
+                mascot.transform,
+                "Curiosity Moon Artwork");
+            SolarARUIFactory.Stretch(mascotArtwork);
+            Wire(mascot, controller.ToggleCuriosities);
+
+            RectTransform indicator = _ui.Panel(
+                "Curiosity Indicator",
+                prompt,
+                SolarARColors.Panel,
+                20f);
+            SolarARUIFactory.Place(
+                indicator,
+                104f,
+                136f,
+                142f,
+                52f,
+                new Vector2(0f, 0f),
+                new Vector2(0f, 0f));
+            TMP_Text indicatorText = _ui.Text(
+                "Curiosity Indicator Text",
+                indicator,
+                "Curiosidades",
+                16f,
+                SolarARColors.Ink,
+                TextAlignmentOptions.Center,
+                true,
+                FontStyles.Bold);
+            SolarARUIFactory.Stretch(indicatorText.rectTransform, 12f, 6f, 12f, 6f);
+
+            RectTransform thoughtDot = _ui.Circle(
+                "Curiosity Thought Dot",
+                prompt,
+                SolarARColors.Panel,
+                14f);
+            SolarARUIFactory.Place(
+                thoughtDot,
+                96f,
+                128f,
+                14f,
+                14f,
+                new Vector2(0f, 0f),
+                new Vector2(0f, 0f));
+
+            journal.gameObject.SetActive(false);
             return root.gameObject;
         }
 
@@ -1368,7 +1645,7 @@ namespace SolarAR.Editor
             AddText(
                 frame,
                 "Support",
-                "Mostre ele de novo para a câmera.",
+                "Mostre este card novamente ou aponte para outro.",
                 17f,
                 304f,
                 56f,
@@ -1857,6 +2134,119 @@ namespace SolarAR.Editor
             logo.raycastTarget = false;
         }
 
+        private static void BuildCameraIllustration(Transform parent, float top)
+        {
+            RectTransform halo = _ui.Circle(
+                "Camera Illustration Halo",
+                parent,
+                SolarARColors.Lavender,
+                152f);
+            SolarARUIFactory.Place(
+                halo,
+                0f,
+                -top,
+                152f,
+                152f,
+                new Vector2(0.5f, 1f),
+                new Vector2(0.5f, 1f));
+
+            RectTransform body = _ui.Panel(
+                "Camera Illustration",
+                halo,
+                SolarARColors.Blue1,
+                22f);
+            SolarARUIFactory.Place(
+                body,
+                0f,
+                -2f,
+                112f,
+                78f,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f));
+
+            RectTransform grip = _ui.Panel(
+                "Camera Grip",
+                halo,
+                SolarARColors.Blue1,
+                8f);
+            SolarARUIFactory.Place(
+                grip,
+                -25f,
+                42f,
+                44f,
+                22f,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f));
+
+            RectTransform lensRing = _ui.Circle(
+                "Camera Lens Ring",
+                body,
+                SolarARColors.Cyan,
+                54f);
+            SolarARUIFactory.Place(
+                lensRing,
+                0f,
+                0f,
+                54f,
+                54f,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f));
+
+            RectTransform lens = _ui.Circle(
+                "Camera Lens",
+                lensRing,
+                SolarARColors.Night,
+                34f);
+            SolarARUIFactory.Place(
+                lens,
+                0f,
+                0f,
+                34f,
+                34f,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f));
+
+            RectTransform lensLight = _ui.Circle(
+                "Camera Lens Light",
+                lens,
+                SolarARColors.Panel,
+                9f);
+            SolarARUIFactory.Place(
+                lensLight,
+                -7f,
+                7f,
+                9f,
+                9f,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f));
+
+            RectTransform flash = _ui.Circle(
+                "Camera Flash",
+                body,
+                SolarARColors.Primary,
+                12f);
+            SolarARUIFactory.Place(
+                flash,
+                38f,
+                20f,
+                12f,
+                12f,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f));
+        }
+
+        private static RectTransform CreateCuriosityMoonArtwork(
+            Transform parent,
+            string name)
+        {
+            RectTransform artwork = _ui.Rect(name, parent);
+            RawImage image = artwork.gameObject.AddComponent<RawImage>();
+            image.texture = _curiosityMoonTexture;
+            image.color = Color.white;
+            image.raycastTarget = false;
+            return artwork;
+        }
+
         private static TMP_Text AddText(
             Transform parent,
             string name,
@@ -2028,6 +2418,20 @@ namespace SolarAR.Editor
             SetObject(serialized, "_planetNameText", references.PlanetName);
             SetObject(serialized, "_firstFactText", references.FirstFact);
             SetObject(serialized, "_secondFactText", references.SecondFact);
+            SetObject(serialized, "_recognizedPlanetNameText", references.RecognizedPlanetName);
+            SetObject(serialized, "_recognizedFirstFactText", references.RecognizedFirstFact);
+            SetObject(serialized, "_recognizedSecondFactText", references.RecognizedSecondFact);
+            SetObject(serialized, "_curiosityPanel", references.CuriosityPanel);
+            SetObject(serialized, "_curiosityPrompt", references.CuriosityPrompt);
+            SetObject(serialized, "_curiosityAccent", references.CuriosityAccent);
+            SetObject(
+                serialized,
+                "_curiosityFirstFactBackground",
+                references.CuriosityFirstFactBackground);
+            SetObject(
+                serialized,
+                "_curiositySecondFactBackground",
+                references.CuriositySecondFactBackground);
             SetObject(serialized, "_detailPlanetNameText", references.DetailPlanetName);
             SetObject(serialized, "_detailPanelNameText", references.DetailPanelName);
             SetObject(serialized, "_detailFirstFactText", references.DetailFirstFact);

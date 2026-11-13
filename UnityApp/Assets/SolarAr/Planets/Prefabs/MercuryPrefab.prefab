@@ -89,8 +89,8 @@ Transform:
   m_GameObject: {fileID: 6256079230377211217}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.03834391, y: 0.03834391, z: 0.03834391}
+  m_LocalPosition: {x: 0, y: 0.035, z: 0}
+  m_LocalScale: {x: 0.04633222, y: 0.04633222, z: 0.04633222}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2438553112491738261}
@@ -197,6 +197,7 @@ GameObject:
   - component: {fileID: 112052396276608310}
   - component: {fileID: 3201485977331831492}
   - component: {fileID: 3568350281690230135}
+  - component: {fileID: 879938446489659379}
   - component: {fileID: 2149863542223875276}
   m_Layer: 0
   m_Name: MercuryPrefab
@@ -235,7 +236,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Planets.PlanetDisplay
   _planetKey: mercury
   _visualRoot: {fileID: 5080037985748781293}
-  _displayDiameterMeters: 0.048
+  _displayDiameterMeters: 0.058
+  _visualOffsetMeters: 0.035
 --- !u!114 &3568350281690230135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,6 +254,21 @@ MonoBehaviour:
   _rotationAxis: {x: 0, y: 1, z: 0}
   _rotationSpeedDegreesPerSecond: 10
   _autoRotate: 1
+--- !u!114 &879938446489659379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482989425099815651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2c48064ff9ced04fb752f3defda0773, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Planets.FloatingController
+  _floatTarget: {fileID: 5080037985748781293}
+  _amplitudeMeters: 0.003
+  _cyclesPerSecond: 0.3
 --- !u!114 &2149863542223875276
 MonoBehaviour:
   m_ObjectHideFlags: 0

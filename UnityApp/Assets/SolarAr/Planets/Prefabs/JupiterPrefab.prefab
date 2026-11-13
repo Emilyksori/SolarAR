@@ -147,8 +147,8 @@ Transform:
   m_GameObject: {fileID: 2732773564893984919}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.008808466, y: 0.008808466, z: 0.008808466}
+  m_LocalPosition: {x: 0, y: 0.035, z: 0}
+  m_LocalScale: {x: 0.010643562, y: 0.010643562, z: 0.010643562}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3747132690632099041}
@@ -229,6 +229,7 @@ GameObject:
   - component: {fileID: 1928250329977491689}
   - component: {fileID: 6333078764569484523}
   - component: {fileID: 2223681609281634382}
+  - component: {fileID: 4423320724574645017}
   - component: {fileID: 1515796863416794105}
   m_Layer: 0
   m_Name: JupiterPrefab
@@ -267,7 +268,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Planets.PlanetDisplay
   _planetKey: jupiter
   _visualRoot: {fileID: 5713224369523203432}
-  _displayDiameterMeters: 0.048
+  _displayDiameterMeters: 0.058
+  _visualOffsetMeters: 0.035
 --- !u!114 &2223681609281634382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,6 +286,21 @@ MonoBehaviour:
   _rotationAxis: {x: 0, y: 1, z: 0}
   _rotationSpeedDegreesPerSecond: 10
   _autoRotate: 1
+--- !u!114 &4423320724574645017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7744236303524164678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2c48064ff9ced04fb752f3defda0773, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Planets.FloatingController
+  _floatTarget: {fileID: 5713224369523203432}
+  _amplitudeMeters: 0.003
+  _cyclesPerSecond: 0.3
 --- !u!114 &1515796863416794105
 MonoBehaviour:
   m_ObjectHideFlags: 0

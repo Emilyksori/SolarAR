@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: neptune
   _facts:
-  - _title: Ventos velozes
-    _description: "Seus ventos podem ser mais r\xE1pidos que o som."
-  - _title: "Lua Trit\xE3o"
-    _description: "Trit\xE3o, sua maior lua, orbita no sentido contr\xE1rio."
+  - _title: Primeira volta
+    _description: Netuno levou 165 anos para completar sua primeira volta desde que foi descoberto.
+  - _title: "Ventos supers\xF4nicos"
+    _description: "Seus ventos passam de 2.000 km/h e s\xE3o os mais r\xE1pidos entre os planetas."

@@ -23,6 +23,7 @@ namespace SolarAR.Interaction
 
         private Vector3 _initialVisualScale;
         private float _currentScaleMultiplier = 1f;
+        private float _presentationScaleMultiplier = 1f;
         private float _previousPinchDistance;
         private bool _pinchStarted;
         private bool _manualInteractionActive;
@@ -111,7 +112,7 @@ namespace SolarAR.Interaction
             if (touch.phase == UnityEngine.InputSystem.TouchPhase.Moved)
             {
                 BeginManualInteraction();
-                RotateVisual(touch.delta.x);
+                RotateVisual(touch.delta);
             }
         }
 
@@ -146,7 +147,7 @@ namespace SolarAR.Interaction
             if (mouse.leftButton.isPressed && !pointerOverUi)
             {
                 BeginManualInteraction();
-                RotateVisual(mouse.delta.ReadValue().x);
+                RotateVisual(mouse.delta.ReadValue());
             }
             else if (!mouse.leftButton.isPressed)
             {
@@ -161,9 +162,13 @@ namespace SolarAR.Interaction
             }
         }
 
-        private void RotateVisual(float horizontalDelta)
+        private void RotateVisual(Vector2 pointerDelta)
         {
-            _visualTarget.Rotate(Vector3.up, -horizontalDelta * _dragSensitivity, Space.Self);
+            float yaw = -pointerDelta.x * _dragSensitivity;
+            float pitch = pointerDelta.y * _dragSensitivity;
+
+            _visualTarget.Rotate(Vector3.up, yaw, Space.World);
+            _visualTarget.Rotate(Vector3.right, pitch, Space.Self);
         }
 
         private void SetScaleMultiplier(float multiplier)
@@ -172,7 +177,19 @@ namespace SolarAR.Interaction
                 multiplier,
                 _minScaleMultiplier,
                 _maxScaleMultiplier);
-            _visualTarget.localScale = _initialVisualScale * _currentScaleMultiplier;
+            ApplyScale();
+        }
+
+        public void SetPresentationScale(float multiplier)
+        {
+            _presentationScaleMultiplier = Mathf.Max(0.01f, multiplier);
+            ApplyScale();
+        }
+
+        private void ApplyScale()
+        {
+            _visualTarget.localScale =
+                _initialVisualScale * _currentScaleMultiplier * _presentationScaleMultiplier;
         }
 
         private void BeginManualInteraction()

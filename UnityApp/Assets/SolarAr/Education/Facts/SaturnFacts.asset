@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: saturn
   _facts:
-  - _title: "Muitos an\xE9is"
-    _description: "Seus an\xE9is s\xE3o formados por incont\xE1veis peda\xE7os de gelo e rocha."
-  - _title: Muitas luas
-    _description: Saturno possui centenas de luas confirmadas.
+  - _title: Planeta boia
+    _description: "Saturno \xE9 menos denso que a \xE1gua e boiaria em um oceano grande o bastante."
+  - _title: "An\xE9is em peda\xE7os"
+    _description: "Seus an\xE9is t\xEAm blocos de gelo que v\xE3o de gr\xE3os min\xFAsculos a montanhas."

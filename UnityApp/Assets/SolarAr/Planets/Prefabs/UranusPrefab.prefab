@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 6294570034245542434}
   - component: {fileID: 6226321940783157504}
   - component: {fileID: 1203295791835107363}
+  - component: {fileID: 801191880850947235}
   - component: {fileID: 3226766656051679844}
   m_Layer: 0
   m_Name: UranusPrefab
@@ -81,7 +82,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Planets.PlanetDisplay
   _planetKey: uranus
   _visualRoot: {fileID: 3509367739230877981}
-  _displayDiameterMeters: 0.048
+  _displayDiameterMeters: 0.058
+  _visualOffsetMeters: 0.035
 --- !u!114 &1203295791835107363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,6 +100,21 @@ MonoBehaviour:
   _rotationAxis: {x: 0, y: 1, z: 0}
   _rotationSpeedDegreesPerSecond: 10
   _autoRotate: 1
+--- !u!114 &801191880850947235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4958865702253429543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2c48064ff9ced04fb752f3defda0773, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Planets.FloatingController
+  _floatTarget: {fileID: 3509367739230877981}
+  _amplitudeMeters: 0.003
+  _cyclesPerSecond: 0.3
 --- !u!114 &3226766656051679844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,8 +280,8 @@ Transform:
   m_GameObject: {fileID: 8396338078429450884}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.027498184, y: 0.027498184, z: 0.027498184}
+  m_LocalPosition: {x: 0, y: 0.035, z: 0}
+  m_LocalScale: {x: 0.03322697, y: 0.03322697, z: 0.03322697}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2393907459857744269}

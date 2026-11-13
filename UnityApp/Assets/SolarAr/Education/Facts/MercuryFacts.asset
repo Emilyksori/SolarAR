@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: mercury
   _facts:
-  - _title: Ano veloz
-    _description: Seu ano dura apenas 88 dias terrestres.
-  - _title: Sem luas
-    _description: "Merc\xFArio n\xE3o possui luas nem an\xE9is."
+  - _title: Um dia gigante
+    _description: "Do nascer do Sol ao pr\xF3ximo, passam 176 dias da Terra \u2014 dois anos de Merc\xFArio!"
+  - _title: Gelo perto do Sol
+    _description: "Crateras escuras nos polos guardam gelo, mesmo t\xE3o perto do Sol."
