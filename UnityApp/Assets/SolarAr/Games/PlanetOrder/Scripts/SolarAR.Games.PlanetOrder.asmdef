@@ -1,0 +1,10 @@
+{
+  "name": "SolarAR.Games.PlanetOrder",
+  "rootNamespace": "SolarAR.Games.PlanetOrder",
+  "references": [
+    "SolarAR.Games.Shared",
+    "Unity.TextMeshPro",
+    "Unity.ugui"
+  ],
+  "autoReferenced": true
+}

@@ -1,0 +1,9 @@
+{
+  "name": "SolarAR.Games.Quiz",
+  "rootNamespace": "SolarAR.Games.Quiz",
+  "references": [
+    "Unity.TextMeshPro",
+    "Unity.ugui"
+  ],
+  "autoReferenced": true
+}

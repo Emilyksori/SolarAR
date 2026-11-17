@@ -14,7 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: mercury
   _facts:
-  - _title: Um dia gigante
-    _description: "Do nascer do Sol ao pr\xF3ximo, passam 176 dias da Terra \u2014 dois anos de Merc\xFArio!"
-  - _title: Gelo perto do Sol
-    _description: "Crateras escuras nos polos guardam gelo, mesmo t\xE3o perto do Sol."
+  - _id: mercury-01-fast-year
+    _title: Ano veloz
+    _description: "Merc\xFArio completa uma volta ao redor do Sol em apenas 88 dias da Terra."
+    _category: 0
+    _order: 1
+    _visual: {fileID: 0}
+  - _id: mercury-02-long-solar-day
+    _title: Dia muito longo
+    _description: "Do nascer do Sol ao pr\xF3ximo passam 176 dias terrestres."
+    _category: 0
+    _order: 2
+    _visual: {fileID: 0}
+  - _id: mercury-03-cratered-world
+    _title: Mundo de crateras
+    _description: "Sua superf\xEDcie rochosa tem muitas crateras formadas por impactos antigos."
+    _category: 1
+    _order: 3
+    _visual: {fileID: 0}
+  - _id: mercury-04-polar-ice
+    _title: Gelo perto do Sol
+    _description: Crateras sempre escuras nos polos conseguem guardar gelo.
+    _category: 7
+    _order: 4
+    _visual: {fileID: 0}
+  - _id: mercury-05-thin-exosphere
+    _title: Quase sem ar
+    _description: "Merc\xFArio n\xE3o tem uma atmosfera espessa para segurar o calor."
+    _category: 2
+    _order: 5
+    _visual: {fileID: 0}
+  - _id: mercury-06-hot-and-cold
+    _title: Calor e frio
+    _description: Os dias podem ser muito quentes, mas as noites ficam extremamente frias.
+    _category: 3
+    _order: 6
+    _visual: {fileID: 0}
+  - _id: mercury-07-smallest-planet
+    _title: O menor planeta
+    _description: "Merc\xFArio \xE9 o menor dos oito planetas do Sistema Solar."
+    _category: 5
+    _order: 7
+    _visual: {fileID: 0}
+  - _id: mercury-08-no-moons
+    _title: Sem luas
+    _description: "Merc\xFArio n\xE3o possui luas nem an\xE9is conhecidos."
+    _category: 4
+    _order: 8
+    _visual: {fileID: 0}

@@ -1,0 +1,14 @@
+{
+  "name": "SolarAR.Education.EditModeTests",
+  "rootNamespace": "SolarAR.Education.Tests",
+  "references": [
+    "SolarAR.Education"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": false
+}

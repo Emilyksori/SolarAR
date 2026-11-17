@@ -1,0 +1,14 @@
+{
+  "name": "SolarAR.Games.Quiz.EditModeTests",
+  "rootNamespace": "SolarAR.Games.Quiz.Tests",
+  "references": [
+    "SolarAR.Games.Quiz"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "autoReferenced": false
+}

@@ -1,0 +1,15 @@
+{
+  "name": "SolarAR.Games.SpaceDetective.EditModeTests",
+  "rootNamespace": "SolarAR.Games.SpaceDetective.Tests",
+  "references": [
+    "SolarAR.Games.SpaceDetective",
+    "SolarAR.Games.Shared"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": false
+}

@@ -1,0 +1,10 @@
+{
+  "name": "SolarAR.Games.Memory",
+  "rootNamespace": "SolarAR.Games.Memory",
+  "references": [
+    "SolarAR.Games.Shared",
+    "Unity.TextMeshPro",
+    "Unity.ugui"
+  ],
+  "autoReferenced": true
+}

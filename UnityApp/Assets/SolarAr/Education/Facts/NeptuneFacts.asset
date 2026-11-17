@@ -14,7 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: neptune
   _facts:
-  - _title: Primeira volta
-    _description: Netuno levou 165 anos para completar sua primeira volta desde que foi descoberto.
-  - _title: "Ventos supers\xF4nicos"
-    _description: "Seus ventos passam de 2.000 km/h e s\xE3o os mais r\xE1pidos entre os planetas."
+  - _id: neptune-01-farthest
+    _title: O mais distante
+    _description: "Netuno \xE9 o planeta mais distante do Sol."
+    _category: 0
+    _order: 1
+    _visual: {fileID: 0}
+  - _id: neptune-02-long-year
+    _title: Ano de 165 anos
+    _description: "Netuno leva cerca de 165 anos terrestres para completar sua \xF3rbita."
+    _category: 0
+    _order: 2
+    _visual: {fileID: 0}
+  - _id: neptune-03-fast-winds
+    _title: Ventos velozes
+    _description: "Sua atmosfera possui os ventos mais r\xE1pidos observados entre os planetas."
+    _category: 2
+    _order: 3
+    _visual: {fileID: 0}
+  - _id: neptune-04-blue-world
+    _title: Mundo azul
+    _description: "O metano e outros efeitos da atmosfera contribuem para sua apar\xEAncia azul."
+    _category: 2
+    _order: 4
+    _visual: {fileID: 0}
+  - _id: neptune-05-ice-giant
+    _title: Gigante de gelo
+    _description: Netuno pertence ao grupo dos gigantes de gelo, assim como Urano.
+    _category: 5
+    _order: 5
+    _visual: {fileID: 0}
+  - _id: neptune-06-triton
+    _title: "Lua ao contr\xE1rio"
+    _description: "Trit\xE3o percorre sua \xF3rbita no sentido contr\xE1rio ao da rota\xE7\xE3o de Netuno."
+    _category: 4
+    _order: 6
+    _visual: {fileID: 0}
+  - _id: neptune-07-dark-storms
+    _title: Tempestades escuras
+    _description: Grandes tempestades podem surgir e desaparecer em sua atmosfera.
+    _category: 2
+    _order: 7
+    _visual: {fileID: 0}
+  - _id: neptune-08-short-day
+    _title: Dia de 16 horas
+    _description: "Apesar da longa \xF3rbita, Netuno gira em torno de si mesmo em cerca de 16 horas."
+    _category: 0
+    _order: 8
+    _visual: {fileID: 0}

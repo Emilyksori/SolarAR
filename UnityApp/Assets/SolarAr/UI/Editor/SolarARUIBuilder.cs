@@ -2,6 +2,11 @@ using System;
 using System.Collections.Generic;
 using SolarAR.AR;
 using SolarAR.Education;
+using SolarAR.Education.Editor;
+using SolarAR.Games.Memory;
+using SolarAR.Games.PlanetOrder;
+using SolarAR.Games.Quiz;
+using SolarAR.Games.SpaceDetective;
 using SolarAR.Planets;
 using SolarAR.UI;
 using TMPro;
@@ -25,7 +30,6 @@ namespace SolarAR.Editor
         private const string LogoPath = "Assets/SolarAr/Branding/SolarARLogo.png";
         private const string CuriosityMoonPath =
             "Assets/SolarAr/UI/Illustrations/CuriosityMoon.png";
-        private const string CardFolder = "Assets/SolarAr/AR/ReferenceImages";
 
         private const string BottomNavigationPath = PrefabFolder + "/BottomNavigation.prefab";
         private const string EducationalPanelPath = PrefabFolder + "/EducationalPanel.prefab";
@@ -34,11 +38,12 @@ namespace SolarAR.Editor
         private const string UiCharacterSet =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" +
             "ÁÀÂÃÉÊÍÓÔÕÚÇáàâãéêíóôõúç" +
-            " .,!?():;/-+•×‹";
+            " .,!?():;/-+•×‹›★→";
 
         private static SolarARUIFactory _ui;
         private static Texture2D _logoTexture;
         private static Texture2D _curiosityMoonTexture;
+        private static QuizQuestionBank _quizQuestionBank;
         private static readonly string[] PlanetKeys =
         {
             "mercury", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"
@@ -47,12 +52,6 @@ namespace SolarAR.Editor
         {
             "Mercúrio", "Terra", "Marte", "Júpiter", "Saturno", "Urano", "Netuno"
         };
-        private static readonly string[] PlanetCardFiles =
-        {
-            "MercuryCard.png", "EarthCard.png", "MarsCard.png", "JupiterCard.png",
-            "SaturnCard.png", "UranusCard.png", "NeptuneCard.png"
-        };
-        private static Texture2D[] _planetTextures;
 
         private sealed class SceneReferences
         {
@@ -69,11 +68,15 @@ namespace SolarAR.Editor
             public GameObject Lost;
             public GameObject Planets;
             public GameObject PlanetDetail;
+            public GameObject Missions;
+            public MissionHubController MissionHubController;
             public PlanetPreviewController PreviewController;
             public Graphic ExploreTabBackground;
             public Graphic PlanetsTabBackground;
+            public Graphic MissionsTabBackground;
             public TMP_Text ExploreTabText;
             public TMP_Text PlanetsTabText;
+            public TMP_Text MissionsTabText;
             public TMP_Text PermissionExplanation;
             public TMP_Text PlanetName;
             public TMP_Text FirstFact;
@@ -86,10 +89,10 @@ namespace SolarAR.Editor
             public Graphic CuriosityAccent;
             public Graphic CuriosityFirstFactBackground;
             public Graphic CuriositySecondFactBackground;
+            public RawImage[] PlanetGalleryImages;
             public TMP_Text DetailPlanetName;
-            public TMP_Text DetailPanelName;
-            public TMP_Text DetailFirstFact;
-            public TMP_Text DetailSecondFact;
+            public PlanetFactCarouselController FactCarouselController;
+            public PlanetPreviewDragSurface PreviewDragSurface;
         }
 
         [MenuItem("SolarAR/UI/Rebuild Figma MVP UI")]
@@ -273,6 +276,8 @@ namespace SolarAR.Editor
                     "_uiBackgroundCamera",
                     "_nightBackground",
                     "_bottomNavigation",
+                    "_missionsTabBackground",
+                    "_missionsTabText",
                     "_permissionExplanation",
                     "_onboardingScreen",
                     "_permissionScreen",
@@ -284,6 +289,8 @@ namespace SolarAR.Editor
                     "_lostScreen",
                     "_planetsScreen",
                     "_planetDetailScreen",
+                    "_missionsScreen",
+                    "_missionHubController",
                     "_planetNameText",
                     "_firstFactText",
                     "_secondFactText",
@@ -296,9 +303,7 @@ namespace SolarAR.Editor
                     "_curiosityFirstFactBackground",
                     "_curiositySecondFactBackground",
                     "_detailPlanetNameText",
-                    "_detailPanelNameText",
-                    "_detailFirstFactText",
-                    "_detailSecondFactText"
+                    "_factCarouselController"
                 };
 
                 foreach (string reference in requiredReferences)
@@ -306,6 +311,22 @@ namespace SolarAR.Editor
                     if (serialized.FindProperty(reference)?.objectReferenceValue == null)
                     {
                         errors.Add($"Missing controller reference: {reference}.");
+                    }
+                }
+
+                SerializedProperty galleryImages = serialized.FindProperty("_planetGalleryImages");
+                if (galleryImages == null || galleryImages.arraySize != PlanetKeys.Length)
+                {
+                    errors.Add("Planet gallery must contain seven 3D thumbnail outputs.");
+                }
+                else
+                {
+                    for (int index = 0; index < galleryImages.arraySize; index++)
+                    {
+                        if (galleryImages.GetArrayElementAtIndex(index).objectReferenceValue == null)
+                        {
+                            errors.Add($"Missing gallery thumbnail output at index {index}.");
+                        }
                     }
                 }
 
@@ -339,6 +360,40 @@ namespace SolarAR.Editor
                 }
             }
 
+            QuizManager[] quizManagers = UnityEngine.Object.FindObjectsByType<QuizManager>(
+                FindObjectsInactive.Include);
+            if (quizManagers.Length != 1)
+            {
+                errors.Add($"Expected one QuizManager, found {quizManagers.Length}.");
+            }
+
+            QuizScreenController[] quizControllers =
+                UnityEngine.Object.FindObjectsByType<QuizScreenController>(
+                    FindObjectsInactive.Include);
+            if (quizControllers.Length != 1)
+            {
+                errors.Add($"Expected one QuizScreenController, found {quizControllers.Length}.");
+            }
+
+            MissionHubController[] missionHubs =
+                UnityEngine.Object.FindObjectsByType<MissionHubController>(
+                    FindObjectsInactive.Include);
+            if (missionHubs.Length != 1)
+            {
+                errors.Add($"Expected one MissionHubController, found {missionHubs.Length}.");
+            }
+
+            ValidateSingleComponent<MemoryScreenController>(errors);
+            ValidateSingleComponent<PlanetOrderScreenController>(errors);
+            ValidateSingleComponent<SpaceDetectiveScreenController>(errors);
+            ValidateSingleComponent<PlanetFactCarouselController>(errors);
+            ValidateSingleComponent<PlanetPreviewDragSurface>(errors);
+
+            QuizQuestionBankSeeder.ValidateBank(
+                AssetDatabase.LoadAssetAtPath<QuizQuestionBank>(QuizQuestionBankSeeder.BankPath),
+                errors);
+            PlanetFactsSeeder.ValidateAll(errors);
+
             foreach (TMP_Text text in UnityEngine.Object.FindObjectsByType<TMP_Text>(
                          FindObjectsInactive.Include))
             {
@@ -352,15 +407,28 @@ namespace SolarAR.Editor
             RawImage[] rawImages = UnityEngine.Object.FindObjectsByType<RawImage>(
                 FindObjectsInactive.Include);
             int curiosityMoonCount = 0;
+            int quizMoonCount = 0;
             foreach (RawImage rawImage in rawImages)
             {
-                if (rawImage.name != "Curiosity Moon Artwork" &&
-                    rawImage.name != "Journal Moon Mascot")
+                bool isCuriosityMoon = rawImage.name == "Curiosity Moon Artwork" ||
+                                       rawImage.name == "Journal Moon Mascot";
+                bool isQuizMoon = rawImage.name == "Quiz Intro Moon Mascot" ||
+                                  rawImage.name == "Quiz Result Moon Mascot";
+                if (!isCuriosityMoon && !isQuizMoon)
                 {
                     continue;
                 }
 
-                curiosityMoonCount++;
+                if (isCuriosityMoon)
+                {
+                    curiosityMoonCount++;
+                }
+
+                if (isQuizMoon)
+                {
+                    quizMoonCount++;
+                }
+
                 if (AssetDatabase.GetAssetPath(rawImage.texture) != CuriosityMoonPath)
                 {
                     errors.Add(
@@ -372,6 +440,11 @@ namespace SolarAR.Editor
             {
                 errors.Add(
                     $"Expected two official curiosity moon images, found {curiosityMoonCount}.");
+            }
+
+            if (quizMoonCount != 2)
+            {
+                errors.Add($"Expected two official quiz moon images, found {quizMoonCount}.");
             }
 
             foreach (GameObject root in scene.GetRootGameObjects())
@@ -470,16 +543,13 @@ namespace SolarAR.Editor
                     $"Official curiosity moon not found: {CuriosityMoonPath}");
             }
 
-            _planetTextures = new Texture2D[PlanetCardFiles.Length];
-            for (int index = 0; index < PlanetCardFiles.Length; index++)
+            _quizQuestionBank = QuizQuestionBankSeeder.EnsureBank();
+            if (_quizQuestionBank == null)
             {
-                string path = CardFolder + "/" + PlanetCardFiles[index];
-                _planetTextures[index] = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-                if (_planetTextures[index] == null)
-                {
-                    throw new InvalidOperationException($"Official planet card not found: {path}");
-                }
+                throw new InvalidOperationException("Quiz question bank could not be created.");
             }
+
+            PlanetFactsSeeder.EnsureAll();
 
             BuildPrefabs();
 
@@ -655,12 +725,12 @@ namespace SolarAR.Editor
                 SolarARColors.OnDark,
                 null,
                 16f,
-                16f);
+                14f);
             SolarARUIFactory.Place(
                 explore.GetComponent<RectTransform>(),
-                -94f,
+                -124f,
                 0f,
-                180f,
+                116f,
                 56f,
                 new Vector2(0.5f, 0.5f),
                 new Vector2(0.5f, 0.5f));
@@ -674,13 +744,32 @@ namespace SolarAR.Editor
                 SolarARColors.Lavender,
                 null,
                 16f,
-                16f);
+                14f);
             planets.GetComponentInChildren<TextMeshProUGUI>().fontStyle = FontStyles.Bold;
             SolarARUIFactory.Place(
                 planets.GetComponent<RectTransform>(),
-                94f,
                 0f,
-                180f,
+                0f,
+                116f,
+                56f,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f));
+
+            Button missions = _ui.Button(
+                "Missions Tab",
+                root,
+                "Missões",
+                SolarARColors.Night,
+                SolarARColors.Lavender,
+                null,
+                16f,
+                14f);
+            missions.GetComponentInChildren<TextMeshProUGUI>().fontStyle = FontStyles.Bold;
+            SolarARUIFactory.Place(
+                missions.GetComponent<RectTransform>(),
+                124f,
+                0f,
+                116f,
                 56f,
                 new Vector2(0.5f, 0.5f),
                 new Vector2(0.5f, 0.5f));
@@ -839,16 +928,24 @@ namespace SolarAR.Editor
                 out references.SecondFact);
             references.Lost = BuildLost(arScreen, controller);
 
-            references.Planets = BuildPlanets(safeArea, controller);
+            references.Planets = BuildPlanets(
+                safeArea,
+                controller,
+                out references.PlanetGalleryImages);
             references.PlanetDetail = BuildPlanetDetail(
                 safeArea,
                 controller,
                 out RawImage previewImage,
                 out references.DetailPlanetName,
-                out references.DetailPanelName,
-                out references.DetailFirstFact,
-                out references.DetailSecondFact);
+                out references.FactCarouselController,
+                out references.PreviewDragSurface);
+            references.Missions = BuildMissions(
+                safeArea,
+                out references.MissionHubController);
             references.PreviewController = BuildPreviewCamera(scene, previewImage);
+            SerializedObject dragSurface = new(references.PreviewDragSurface);
+            SetObject(dragSurface, "_previewController", references.PreviewController);
+            dragSurface.ApplyModifiedPropertiesWithoutUndo();
 
             references.BottomNavigation = InstantiatePrefabForAuthoring(
                 BottomNavigationPath,
@@ -867,12 +964,18 @@ namespace SolarAR.Editor
             Button planetsTab = FindChildComponent<Button>(
                 references.BottomNavigation.transform,
                 "Planets Tab");
+            Button missionsTab = FindChildComponent<Button>(
+                references.BottomNavigation.transform,
+                "Missions Tab");
             Wire(exploreTab, controller.ShowExploreTab);
             Wire(planetsTab, controller.ShowPlanets);
+            Wire(missionsTab, controller.ShowMissions);
             references.ExploreTabBackground = exploreTab.targetGraphic;
             references.PlanetsTabBackground = planetsTab.targetGraphic;
+            references.MissionsTabBackground = missionsTab.targetGraphic;
             references.ExploreTabText = exploreTab.GetComponentInChildren<TMP_Text>();
             references.PlanetsTabText = planetsTab.GetComponentInChildren<TMP_Text>();
+            references.MissionsTabText = missionsTab.GetComponentInChildren<TMP_Text>();
 
             return references;
         }
@@ -947,8 +1050,8 @@ namespace SolarAR.Editor
 
             VerticalGradientGraphic gradient = background.GetComponent<VerticalGradientGraphic>();
             gradient.SetColors(
-                SolarARColors.Night,
-                Color.Lerp(SolarARColors.Night, SolarARColors.Blue4, 0.18f));
+                Color.Lerp(SolarARColors.DeepSpace, SolarARColors.Purple, 0.18f),
+                SolarARColors.DeepSpace);
             gradient.raycastTarget = false;
 
             AddStars(rect);
@@ -1668,14 +1771,17 @@ namespace SolarAR.Editor
             return root.gameObject;
         }
 
-        private static GameObject BuildPlanets(RectTransform parent, EarthMvpUI controller)
+        private static GameObject BuildPlanets(
+            RectTransform parent,
+            EarthMvpUI controller,
+            out RawImage[] planetImages)
         {
             RectTransform root = CreateScreen("03_Planetas", parent);
             BuildHeader(root, "Planetas", controller.BackToOnboarding, null);
             AddText(
                 root,
                 "Support",
-                "Toque para ver de perto",
+                "Escolha um planeta 3D para explorar",
                 17f,
                 80f,
                 32f,
@@ -1684,6 +1790,7 @@ namespace SolarAR.Editor
                 false,
                 SolarARColors.Lavender);
 
+            planetImages = new RawImage[PlanetNames.Length];
             for (int index = 0; index < PlanetNames.Length; index++)
             {
                 int row = index / 2;
@@ -1693,9 +1800,9 @@ namespace SolarAR.Editor
                 Button card = BuildPlanetCard(
                     root,
                     PlanetNames[index],
-                    _planetTextures[index],
                     left,
-                    top);
+                    top,
+                    out planetImages[index]);
                 WireInt(card, controller.ShowPlanetDetail, index);
             }
 
@@ -1705,14 +1812,14 @@ namespace SolarAR.Editor
         private static Button BuildPlanetCard(
             Transform parent,
             string planetName,
-            Texture2D texture,
             float left,
-            float top)
+            float top,
+            out RawImage planetImage)
         {
             RectTransform card = _ui.Panel(
                 planetName + " Card",
                 parent,
-                SolarARColors.Blue4,
+                Color.Lerp(SolarARColors.SpaceCard, SolarARColors.Purple, 0.08f),
                 20f);
             SolarARUIFactory.Place(
                 card,
@@ -1728,18 +1835,32 @@ namespace SolarAR.Editor
             Button button = card.gameObject.AddComponent<Button>();
             button.targetGraphic = background;
 
-            RectTransform imageRect = _ui.Rect("Planet Preview", card);
+            RectTransform glow = _ui.Circle(
+                "Planet Glow",
+                card,
+                new Color(SolarARColors.Cyan.r, SolarARColors.Cyan.g, SolarARColors.Cyan.b, 0.14f),
+                94f);
             SolarARUIFactory.Place(
-                imageRect,
-                51f,
-                -8f,
-                72f,
-                96f,
+                glow,
+                40f,
+                -4f,
+                94f,
+                94f,
                 new Vector2(0f, 1f),
                 new Vector2(0f, 1f));
-            RawImage image = imageRect.gameObject.AddComponent<RawImage>();
-            image.texture = texture;
-            image.raycastTarget = false;
+
+            RectTransform imageRect = _ui.Rect("Planet 3D Thumbnail", card);
+            SolarARUIFactory.Place(
+                imageRect,
+                35f,
+                -1f,
+                104f,
+                104f,
+                new Vector2(0f, 1f),
+                new Vector2(0f, 1f));
+            planetImage = imageRect.gameObject.AddComponent<RawImage>();
+            planetImage.color = Color.white;
+            planetImage.raycastTarget = false;
 
             TextMeshProUGUI label = _ui.Text(
                 "Planet Name",
@@ -1759,9 +1880,8 @@ namespace SolarAR.Editor
             EarthMvpUI controller,
             out RawImage previewImage,
             out TMP_Text detailPlanetName,
-            out TMP_Text panelName,
-            out TMP_Text firstFact,
-            out TMP_Text secondFact)
+            out PlanetFactCarouselController factCarouselController,
+            out PlanetPreviewDragSurface previewDragSurface)
         {
             RectTransform root = CreateScreen("04_PlanetDetail", parent);
             BuildHeader(root, "Terra", controller.BackToPlanets, null);
@@ -1769,7 +1889,7 @@ namespace SolarAR.Editor
             AddText(
                 root,
                 "Preview Label",
-                "Visualização sem câmera",
+                "Arraste o planeta para girar",
                 16f,
                 80f,
                 28f,
@@ -1781,84 +1901,138 @@ namespace SolarAR.Editor
             RectTransform previewFrame = _ui.Panel(
                 "Planet Preview Frame",
                 root,
-                SolarARColors.Blue4,
+                Color.Lerp(SolarARColors.SpaceCard, SolarARColors.Purple, 0.12f),
                 28f);
             SolarARUIFactory.Top(previewFrame, 112f, 292f, 40f, 40f);
             RectTransform output = _ui.Rect("Planet Preview Output", previewFrame);
             SolarARUIFactory.Stretch(output, 12f, 12f, 12f, 12f);
             previewImage = output.gameObject.AddComponent<RawImage>();
             previewImage.color = Color.clear;
-            previewImage.raycastTarget = false;
+            previewImage.raycastTarget = true;
+            previewDragSurface = output.gameObject.AddComponent<PlanetPreviewDragSurface>();
 
             RectTransform panel = _ui.Panel(
-                "Educational Panel",
+                "Fact Carousel",
                 root,
-                SolarARColors.Panel,
+                SolarARColors.SpaceCard,
                 28f);
-            SolarARUIFactory.Top(panel, 420f, 274f, 16f, 16f);
-            panelName = AddText(
+            SolarARUIFactory.Top(panel, 420f, 278f, 16f, 16f);
+            panel.GetComponent<Graphic>().raycastTarget = true;
+            CanvasGroup canvasGroup = panel.gameObject.AddComponent<CanvasGroup>();
+            factCarouselController = panel.gameObject.AddComponent<PlanetFactCarouselController>();
+
+            RectTransform accent = _ui.Panel(
+                "Planet Accent",
                 panel,
-                "Planet Name",
-                "Terra",
-                26f,
-                10f,
-                40f,
+                SolarARColors.Cyan,
+                3f);
+            SolarARUIFactory.Top(accent, 0f, 6f, 0f, 0f);
+
+            TMP_Text category = AddText(
+                panel,
+                "Fact Category",
+                "Vida e água",
+                14f,
+                18f,
+                24f,
+                20f,
+                88f,
+                false,
+                SolarARColors.Cyan,
+                TextAlignmentOptions.MidlineLeft,
+                FontStyles.Bold);
+            TMP_Text progress = AddText(
+                panel,
+                "Fact Progress",
+                "1/8",
+                15f,
+                18f,
+                24f,
+                278f,
+                20f,
+                false,
+                SolarARColors.Lavender,
+                TextAlignmentOptions.MidlineRight,
+                FontStyles.Bold);
+            TMP_Text factTitle = AddText(
+                panel,
+                "Fact Title",
+                "Planeta azul",
+                23f,
+                48f,
+                36f,
                 20f,
                 20f,
                 true,
-                SolarARColors.Ink,
+                SolarARColors.OnDark,
                 TextAlignmentOptions.MidlineLeft,
                 FontStyles.Bold);
-
-            RectTransform firstCard = _ui.Panel("First Fact Card", panel, SolarARColors.Secondary, 20f);
-            SolarARUIFactory.Place(
-                firstCard,
-                16f,
-                -58f,
-                166f,
-                154f,
-                new Vector2(0f, 1f),
-                new Vector2(0f, 1f));
-            firstFact = _ui.Text(
-                "First Fact Text",
-                firstCard,
-                "É o único planeta conhecido que tem vida.",
-                16f,
-                SolarARColors.Ink,
-                TextAlignmentOptions.TopLeft);
-            SolarARUIFactory.Stretch(firstFact.rectTransform, 14f, 14f, 14f, 14f);
-
-            RectTransform secondCard = _ui.Panel("Second Fact Card", panel, SolarARColors.FactSun, 20f);
-            SolarARUIFactory.Place(
-                secondCard,
-                -16f,
-                -58f,
-                166f,
-                154f,
-                new Vector2(1f, 1f),
-                new Vector2(1f, 1f));
-            secondFact = _ui.Text(
-                "Second Fact Text",
-                secondCard,
-                "Tem 1 lua, chamada Lua.",
-                16f,
-                SolarARColors.Ink,
-                TextAlignmentOptions.TopLeft);
-            SolarARUIFactory.Stretch(secondFact.rectTransform, 14f, 14f, 14f, 14f);
-
-            TMP_Text hint = _ui.Text(
-                "Gesture Hint",
+            TMP_Text factDescription = AddText(
                 panel,
-                "Gire • Aproxime • Reduza",
-                15f,
+                "Fact Description",
+                "A água cobre a maior parte da superfície da Terra.",
+                17f,
+                88f,
+                96f,
+                20f,
+                20f,
+                false,
+                SolarARColors.OnDark,
+                TextAlignmentOptions.TopLeft);
+            AddText(
+                panel,
+                "Swipe Hint",
+                "Deslize ou use os botões",
+                13f,
+                180f,
+                22f,
+                20f,
+                20f,
+                false,
+                SolarARColors.Lavender);
+
+            Button previousFact = AddButton(
+                panel,
+                "Previous Fact Button",
+                "‹ Anterior",
+                SolarARColors.Secondary,
                 SolarARColors.Ink,
-                TextAlignmentOptions.Center);
-            SolarARUIFactory.Bottom(hint.rectTransform, 8f, 28f, 16f, 16f);
+                210f,
+                48f,
+                20f,
+                194f,
+                20f,
+                15f);
+            Button nextFact = AddButton(
+                panel,
+                "Next Fact Button",
+                "Próxima ›",
+                SolarARColors.Primary,
+                SolarARColors.Ink,
+                210f,
+                48f,
+                194f,
+                20f,
+                20f,
+                15f);
+            Wire(previousFact, factCarouselController.ShowPrevious);
+            Wire(nextFact, factCarouselController.ShowNext);
+
+            SerializedObject carouselData = new(factCarouselController);
+            SetObject(carouselData, "_cardCanvasGroup", canvasGroup);
+            SetObject(carouselData, "_accent", accent.GetComponent<Graphic>());
+            SetObject(carouselData, "_categoryText", category);
+            SetObject(carouselData, "_titleText", factTitle);
+            SetObject(carouselData, "_descriptionText", factDescription);
+            SetObject(carouselData, "_progressText", progress);
+            SetObject(carouselData, "_previousButton", previousFact);
+            SetObject(carouselData, "_nextButton", nextFact);
+            carouselData.ApplyModifiedPropertiesWithoutUndo();
 
             Button previous = AddButton(
                 root,
                 "Previous Button",
-                "Anterior",
+                "Planeta anterior",
                 SolarARColors.Secondary,
                 SolarARColors.Ink,
                 710f,
@@ -1866,11 +2040,11 @@ namespace SolarAR.Editor
                 24f,
                 214f,
                 20f,
-                17f);
+                14f);
             Button next = AddButton(
                 root,
                 "Next Button",
-                "Próximo",
+                "Próximo planeta",
                 SolarARColors.Primary,
                 SolarARColors.Ink,
                 710f,
@@ -1878,10 +2052,1023 @@ namespace SolarAR.Editor
                 214f,
                 24f,
                 20f,
-                17f);
+                14f);
             Wire(previous, controller.ShowPreviousPlanet);
             Wire(next, controller.ShowNextPlanet);
             return root.gameObject;
+        }
+
+        private static GameObject BuildMissions(
+            RectTransform parent,
+            out MissionHubController hubController)
+        {
+            RectTransform root = CreateScreen("05_Missoes_Espaciais", parent);
+            hubController = root.gameObject.AddComponent<MissionHubController>();
+
+            RectTransform hub = CreateScreen("Mission Hub", root);
+            AddText(
+                hub,
+                "Title",
+                "Missões Espaciais",
+                32f,
+                24f,
+                48f,
+                24f,
+                24f,
+                true);
+            AddText(
+                hub,
+                "Introduction",
+                "Escolha uma atividade e embarque em uma nova descoberta!",
+                17f,
+                80f,
+                48f,
+                32f,
+                32f,
+                false,
+                SolarARColors.Lavender);
+
+            Button quizCard = BuildMissionCard(
+                hub,
+                "Quiz Mission Card",
+                "?",
+                "Quiz Galáctico",
+                "Responda perguntas sobre os planetas.",
+                -80f,
+                152f);
+            Button memoryCard = BuildMissionCard(
+                hub,
+                "Memory Mission Card",
+                "◆ ◆",
+                "Memória Cósmica",
+                "Encontre os pares de planetas.",
+                80f,
+                152f);
+            Button orderCard = BuildMissionCard(
+                hub,
+                "Order Mission Card",
+                "1 → 7",
+                "Ordem Planetária",
+                "Organize os planetas perto do Sol.",
+                -80f,
+                382f);
+            Button detectiveCard = BuildMissionCard(
+                hub,
+                "Detective Mission Card",
+                "? +",
+                "Detetive Espacial",
+                "Use pistas para descobrir o planeta.",
+                80f,
+                382f);
+
+            GameObject quizRoot = BuildQuiz(root, hubController, out QuizScreenController quizController);
+            GameObject memoryRoot = BuildMemoryGame(
+                root,
+                hubController,
+                out MemoryScreenController memoryController);
+            GameObject orderRoot = BuildPlanetOrderGame(
+                root,
+                hubController,
+                out PlanetOrderScreenController orderController);
+            GameObject detectiveRoot = BuildSpaceDetectiveGame(
+                root,
+                hubController,
+                out SpaceDetectiveScreenController detectiveController);
+            Wire(quizCard, hubController.OpenQuiz);
+            Wire(memoryCard, hubController.OpenMemory);
+            Wire(orderCard, hubController.OpenPlanetOrder);
+            Wire(detectiveCard, hubController.OpenSpaceDetective);
+
+            SerializedObject hubData = new(hubController);
+            SetObject(hubData, "_hubRoot", hub.gameObject);
+            SetObject(hubData, "_quizRoot", quizRoot);
+            SetObject(hubData, "_quizController", quizController);
+            SetObject(hubData, "_memoryRoot", memoryRoot);
+            SetObject(hubData, "_memoryController", memoryController);
+            SetObject(hubData, "_planetOrderRoot", orderRoot);
+            SetObject(hubData, "_planetOrderController", orderController);
+            SetObject(hubData, "_spaceDetectiveRoot", detectiveRoot);
+            SetObject(hubData, "_spaceDetectiveController", detectiveController);
+            hubData.ApplyModifiedPropertiesWithoutUndo();
+
+            hub.gameObject.SetActive(true);
+            quizRoot.SetActive(false);
+            memoryRoot.SetActive(false);
+            orderRoot.SetActive(false);
+            detectiveRoot.SetActive(false);
+            return root.gameObject;
+        }
+
+        private static Button BuildMissionCard(
+            Transform parent,
+            string objectName,
+            string icon,
+            string title,
+            string description,
+            float x,
+            float top)
+        {
+            RectTransform card = _ui.Panel(
+                objectName,
+                parent,
+                Color.Lerp(SolarARColors.SpaceCard, SolarARColors.Purple, top < 300f ? 0.10f : 0.05f),
+                24f);
+            SolarARUIFactory.Place(
+                card,
+                x,
+                -top,
+                144f,
+                202f,
+                new Vector2(0.5f, 1f),
+                new Vector2(0.5f, 1f));
+            Button button = card.gameObject.AddComponent<Button>();
+            button.targetGraphic = card.GetComponent<Graphic>();
+            button.targetGraphic.raycastTarget = true;
+
+            Color accentColor = x < 0f ? SolarARColors.Cyan : SolarARColors.Magenta;
+            RectTransform iconGlow = _ui.Circle(
+                "Icon Glow",
+                card,
+                new Color(accentColor.r, accentColor.g, accentColor.b, 0.16f),
+                54f);
+            SolarARUIFactory.Place(
+                iconGlow,
+                45f,
+                -8f,
+                54f,
+                54f,
+                new Vector2(0f, 1f),
+                new Vector2(0f, 1f));
+
+            TMP_Text iconText = AddText(
+                card,
+                "Icon",
+                icon,
+                25f,
+                16f,
+                44f,
+                12f,
+                12f,
+                true,
+                accentColor);
+            iconText.overflowMode = TextOverflowModes.Overflow;
+            AddText(
+                card,
+                "Game Name",
+                title,
+                18f,
+                70f,
+                48f,
+                12f,
+                12f,
+                true,
+                SolarARColors.OnDark);
+            AddText(
+                card,
+                "Description",
+                description,
+                13f,
+                124f,
+                60f,
+                12f,
+                12f,
+                false,
+                SolarARColors.Lavender);
+            return button;
+        }
+
+        private static GameObject BuildQuiz(
+            RectTransform parent,
+            MissionHubController hubController,
+            out QuizScreenController screenController)
+        {
+            RectTransform root = CreateScreen("Quiz Galactico", parent);
+            QuizManager quizManager = root.gameObject.AddComponent<QuizManager>();
+            screenController = root.gameObject.AddComponent<QuizScreenController>();
+
+            SerializedObject managerData = new(quizManager);
+            SetObject(managerData, "_questionBank", _quizQuestionBank);
+            managerData.ApplyModifiedPropertiesWithoutUndo();
+
+            RectTransform intro = CreateScreen("Quiz Introduction", root);
+            AddMissionBackButton(intro, hubController);
+            AddText(
+                intro,
+                "Title",
+                "Missões Espaciais",
+                32f,
+                32f,
+                48f,
+                128f,
+                24f,
+                true);
+
+            RectTransform introMoon = CreateCuriosityMoonArtwork(
+                intro,
+                "Quiz Intro Moon Mascot");
+            SolarARUIFactory.Place(
+                introMoon,
+                0f,
+                -104f,
+                176f,
+                160f,
+                new Vector2(0.5f, 1f),
+                new Vector2(0.5f, 1f));
+
+            AddText(
+                intro,
+                "Mission Name",
+                "Quiz Galáctico",
+                28f,
+                280f,
+                48f,
+                32f,
+                32f,
+                true,
+                SolarARColors.Primary);
+            TMP_Text introMessage = AddText(
+                intro,
+                "Mission Introduction",
+                "Responda cinco perguntas e descubra quanto você conhece sobre os planetas!",
+                18f,
+                344f,
+                72f,
+                40f,
+                40f,
+                false,
+                SolarARColors.Lavender);
+
+            RectTransform summaryPanel = _ui.Panel(
+                "Mission Summary",
+                intro,
+                SolarARColors.Blue4,
+                20f);
+            SolarARUIFactory.Top(summaryPanel, 448f, 72f, 32f, 32f);
+            TMP_Text progressSummary = _ui.Text(
+                "Progress Summary",
+                summaryPanel,
+                "Melhor pontuação: 0/50  •  Missões concluídas: 0",
+                15f,
+                SolarARColors.OnDark,
+                TextAlignmentOptions.Center,
+                false,
+                FontStyles.Bold);
+            SolarARUIFactory.Stretch(progressSummary.rectTransform, 12f, 8f, 12f, 8f);
+
+            Button startButton = AddButton(
+                intro,
+                "Start Mission Button",
+                "Começar missão",
+                SolarARColors.Primary,
+                SolarARColors.Ink,
+                560f,
+                64f,
+                40f,
+                40f,
+                24f,
+                20f,
+                true);
+            Wire(startButton, screenController.StartMission);
+
+            RectTransform question = CreateScreen("Quiz Question", root);
+            AddMissionBackButton(question, hubController);
+            TMP_Text progressText = AddText(
+                question,
+                "Question Progress",
+                "Pergunta 1/5",
+                18f,
+                24f,
+                32f,
+                128f,
+                24f,
+                false,
+                SolarARColors.Lavender,
+                TextAlignmentOptions.Center,
+                FontStyles.Bold);
+
+            RectTransform progressBar = _ui.Panel(
+                "Question Progress Bar",
+                question,
+                SolarARColors.Blue4,
+                8f);
+            SolarARUIFactory.Top(progressBar, 72f, 16f, 32f, 32f);
+            Image progressFill = _ui.Line("Progress Fill", progressBar, SolarARColors.Cyan);
+            SolarARUIFactory.Stretch(progressFill.rectTransform, 2f, 2f, 2f, 2f);
+            progressFill.type = Image.Type.Filled;
+            progressFill.fillMethod = Image.FillMethod.Horizontal;
+            progressFill.fillOrigin = (int)Image.OriginHorizontal.Left;
+            progressFill.fillAmount = 0.2f;
+
+            RectTransform questionCard = _ui.Panel(
+                "Question Card",
+                question,
+                SolarARColors.Panel,
+                24f);
+            SolarARUIFactory.Top(questionCard, 112f, 184f, 24f, 24f);
+            AddText(
+                questionCard,
+                "Question Label",
+                "PERGUNTA",
+                14f,
+                16f,
+                24f,
+                20f,
+                20f,
+                false,
+                SolarARColors.Blue1,
+                TextAlignmentOptions.Center,
+                FontStyles.Bold);
+            TMP_Text questionText = AddText(
+                questionCard,
+                "Question Text",
+                "Qual planeta fica mais perto do Sol?",
+                22f,
+                48f,
+                112f,
+                20f,
+                20f,
+                true,
+                SolarARColors.Ink);
+
+            QuizAnswerButton[] answerButtons = new QuizAnswerButton[3];
+            for (int index = 0; index < answerButtons.Length; index++)
+            {
+                Button answer = AddButton(
+                    question,
+                    $"Answer {index + 1} Button",
+                    $"Alternativa {index + 1}",
+                    SolarARColors.Secondary,
+                    SolarARColors.Ink,
+                    320f + index * 80f,
+                    64f,
+                    32f,
+                    32f,
+                    20f,
+                    16f,
+                    true);
+                QuizAnswerButton answerController = answer.gameObject.AddComponent<QuizAnswerButton>();
+                SerializedObject answerData = new(answerController);
+                SetObject(answerData, "_button", answer);
+                SetObject(answerData, "_label", answer.GetComponentInChildren<TMP_Text>());
+                SetObject(answerData, "_background", answer.targetGraphic);
+                SetObject(answerData, "_controller", screenController);
+                answerData.FindProperty("_answerIndex").intValue = index;
+                answerData.ApplyModifiedPropertiesWithoutUndo();
+                Wire(answer, answerController.HandlePressed);
+                answerButtons[index] = answerController;
+            }
+
+            RectTransform feedback = _ui.Panel(
+                "Answer Feedback",
+                question,
+                SolarARColors.Panel,
+                20f);
+            SolarARUIFactory.Top(feedback, 568f, 128f, 24f, 24f);
+            TMP_Text feedbackTitle = AddText(
+                feedback,
+                "Feedback Title",
+                "Muito bem! Resposta correta.",
+                17f,
+                12f,
+                38f,
+                16f,
+                16f,
+                false,
+                SolarARColors.Ink,
+                TextAlignmentOptions.MidlineLeft,
+                FontStyles.Bold);
+            TMP_Text feedbackExplanation = AddText(
+                feedback,
+                "Feedback Explanation",
+                "Aqui aparece uma explicação curta para aprender ainda mais.",
+                15f,
+                48f,
+                68f,
+                16f,
+                16f,
+                false,
+                SolarARColors.Ink,
+                TextAlignmentOptions.TopLeft);
+
+            Button nextButton = AddButton(
+                question,
+                "Next Question Button",
+                "Próxima pergunta",
+                SolarARColors.Primary,
+                SolarARColors.Ink,
+                712f,
+                56f,
+                48f,
+                48f,
+                22f,
+                18f,
+                true);
+            nextButton.interactable = false;
+            Wire(nextButton, screenController.NextQuestion);
+
+            RectTransform result = CreateScreen("Quiz Result", root);
+            AddMissionBackButton(result, hubController);
+            AddText(
+                result,
+                "Title",
+                "Missão concluída!",
+                32f,
+                40f,
+                48f,
+                128f,
+                24f,
+                true);
+            RectTransform resultMoon = CreateCuriosityMoonArtwork(
+                result,
+                "Quiz Result Moon Mascot");
+            SolarARUIFactory.Place(
+                resultMoon,
+                0f,
+                -112f,
+                168f,
+                152f,
+                new Vector2(0.5f, 1f),
+                new Vector2(0.5f, 1f));
+
+            TMP_Text scoreText = AddText(
+                result,
+                "Final Score",
+                "50/50 pontos",
+                30f,
+                288f,
+                48f,
+                32f,
+                32f,
+                true,
+                SolarARColors.Primary);
+            RectTransform starsRoot = _ui.Rect("Stars", result);
+            SolarARUIFactory.Top(starsRoot, 352f, 48f, 32f, 32f);
+            QuizStarGraphic[] stars = new QuizStarGraphic[3];
+            for (int index = 0; index < stars.Length; index++)
+            {
+                GameObject starObject = new(
+                    $"Star {index + 1}",
+                    typeof(RectTransform),
+                    typeof(CanvasRenderer),
+                    typeof(QuizStarGraphic));
+                RectTransform starRect = starObject.GetComponent<RectTransform>();
+                starRect.SetParent(starsRoot, false);
+                SolarARUIFactory.Place(
+                    starRect,
+                    (index - 1) * 56f,
+                    0f,
+                    42f,
+                    42f,
+                    Vector2.one * 0.5f,
+                    Vector2.one * 0.5f);
+                stars[index] = starObject.GetComponent<QuizStarGraphic>();
+                stars[index].color = SolarARColors.Primary;
+                stars[index].raycastTarget = false;
+            }
+            TMP_Text correctAnswersText = AddText(
+                result,
+                "Correct Answers",
+                "Você acertou 5 de 5 perguntas.",
+                18f,
+                416f,
+                32f,
+                32f,
+                32f,
+                false,
+                SolarARColors.OnDark,
+                TextAlignmentOptions.Center,
+                FontStyles.Bold);
+
+            RectTransform resultMessagePanel = _ui.Panel(
+                "Mascot Result Message",
+                result,
+                SolarARColors.Blue4,
+                20f);
+            SolarARUIFactory.Top(resultMessagePanel, 472f, 104f, 32f, 32f);
+            TMP_Text resultMessage = _ui.Text(
+                "Result Message",
+                resultMessagePanel,
+                "Incrível! Você completou a missão como um grande explorador!",
+                17f,
+                SolarARColors.OnDark,
+                TextAlignmentOptions.Center,
+                false,
+                FontStyles.Bold);
+            SolarARUIFactory.Stretch(resultMessage.rectTransform, 16f, 12f, 16f, 12f);
+
+            Button replayButton = AddButton(
+                result,
+                "Replay Button",
+                "Jogar novamente",
+                SolarARColors.Primary,
+                SolarARColors.Ink,
+                624f,
+                64f,
+                40f,
+                40f,
+                24f,
+                20f,
+                true);
+            Wire(replayButton, screenController.Replay);
+
+            SerializedObject screenData = new(screenController);
+            SetObject(screenData, "_quizManager", quizManager);
+            SetObject(screenData, "_introRoot", intro.gameObject);
+            SetObject(screenData, "_questionRoot", question.gameObject);
+            SetObject(screenData, "_resultRoot", result.gameObject);
+            SetObject(screenData, "_introMessageText", introMessage);
+            SetObject(screenData, "_progressSummaryText", progressSummary);
+            SetObject(screenData, "_progressText", progressText);
+            SetObject(screenData, "_progressFill", progressFill);
+            SetObject(screenData, "_questionText", questionText);
+            SerializedProperty answerButtonData = screenData.FindProperty("_answerButtons");
+            answerButtonData.arraySize = answerButtons.Length;
+            for (int index = 0; index < answerButtons.Length; index++)
+            {
+                answerButtonData.GetArrayElementAtIndex(index).objectReferenceValue = answerButtons[index];
+            }
+
+            SetObject(screenData, "_feedbackPanel", feedback.gameObject);
+            SetObject(screenData, "_feedbackTitleText", feedbackTitle);
+            SetObject(screenData, "_feedbackExplanationText", feedbackExplanation);
+            SetObject(screenData, "_nextButton", nextButton);
+            SetObject(screenData, "_scoreText", scoreText);
+            SetObject(screenData, "_correctAnswersText", correctAnswersText);
+            SerializedProperty starsData = screenData.FindProperty("_stars");
+            starsData.arraySize = stars.Length;
+            for (int index = 0; index < stars.Length; index++)
+            {
+                starsData.GetArrayElementAtIndex(index).objectReferenceValue = stars[index];
+            }
+            SetObject(screenData, "_resultMessageText", resultMessage);
+            screenData.ApplyModifiedPropertiesWithoutUndo();
+
+            intro.gameObject.SetActive(true);
+            question.gameObject.SetActive(false);
+            result.gameObject.SetActive(false);
+            feedback.gameObject.SetActive(false);
+            return root.gameObject;
+        }
+
+        private static void AddMissionBackButton(Transform parent, MissionHubController hubController)
+        {
+            Button backButton = _ui.Button(
+                "Back to Mission Hub",
+                parent,
+                "‹ Central",
+                SolarARColors.Blue4,
+                SolarARColors.OnDark,
+                null,
+                20f,
+                15f,
+                false);
+            SolarARUIFactory.Place(
+                backButton.GetComponent<RectTransform>(),
+                16f,
+                -16f,
+                104f,
+                48f,
+                new Vector2(0f, 1f),
+                new Vector2(0f, 1f));
+            Wire(backButton, hubController.BackToHub);
+        }
+
+        private static GameObject BuildMemoryGame(
+            RectTransform parent,
+            MissionHubController hubController,
+            out MemoryScreenController controller)
+        {
+            RectTransform root = CreateScreen("Memory Game", parent);
+            controller = root.gameObject.AddComponent<MemoryScreenController>();
+
+            RectTransform board = CreateScreen("Memory Board", root);
+            AddMissionBackButton(board, hubController);
+            AddText(board, "Title", "Memória Cósmica", 28f, 20f, 44f, 116f, 24f, true);
+            TMP_Text pairsText = AddText(
+                board, "Pairs", "Pares: 0/6", 16f, 76f, 28f, 24f, 190f, false,
+                SolarARColors.Lavender, TextAlignmentOptions.MidlineLeft, FontStyles.Bold);
+            TMP_Text attemptsText = AddText(
+                board, "Attempts", "Tentativas: 0", 16f, 76f, 28f, 190f, 24f, false,
+                SolarARColors.Lavender, TextAlignmentOptions.MidlineRight, FontStyles.Bold);
+            AddText(
+                board,
+                "Instructions",
+                "Encontre os seis pares. Duas cartas formam uma tentativa.",
+                14f,
+                110f,
+                38f,
+                24f,
+                24f,
+                false,
+                SolarARColors.OnDark);
+
+            Button[] cardButtons = new Button[12];
+            RawImage[] cardImages = new RawImage[12];
+            TMP_Text[] cardLabels = new TMP_Text[12];
+            for (int index = 0; index < cardButtons.Length; index++)
+            {
+                int row = index / 3;
+                int column = index % 3;
+                RectTransform card = _ui.Panel(
+                    $"Memory Card {index + 1}", board, SolarARColors.Blue4, 16f);
+                SolarARUIFactory.Place(
+                    card,
+                    (column - 1) * 104f,
+                    -(158f + row * 126f),
+                    92f,
+                    112f,
+                    new Vector2(0.5f, 1f),
+                    new Vector2(0.5f, 1f));
+                Button button = card.gameObject.AddComponent<Button>();
+                button.targetGraphic = card.GetComponent<Graphic>();
+                button.targetGraphic.raycastTarget = true;
+
+                GameObject imageObject = new(
+                    "Planet Image",
+                    typeof(RectTransform),
+                    typeof(CanvasRenderer),
+                    typeof(RawImage));
+                RectTransform imageRect = imageObject.GetComponent<RectTransform>();
+                imageRect.SetParent(card, false);
+                SolarARUIFactory.Top(imageRect, 8f, 72f, 10f, 10f);
+                RawImage image = imageObject.GetComponent<RawImage>();
+                image.raycastTarget = false;
+                image.uvRect = new Rect(0f, 0f, 1f, 1f);
+
+                TMP_Text label = _ui.Text(
+                    "Card Label",
+                    card,
+                    "?",
+                    18f,
+                    SolarARColors.OnDark,
+                    TextAlignmentOptions.Center,
+                    true,
+                    FontStyles.Bold);
+                SolarARUIFactory.Bottom(label.rectTransform, 6f, 24f, 4f, 4f);
+
+                WireInt(button, controller.SelectCard, index);
+                cardButtons[index] = button;
+                cardImages[index] = image;
+                cardLabels[index] = label;
+            }
+
+            RectTransform result = CreateScreen("Memory Result", root);
+            AddMissionBackButton(result, hubController);
+            AddText(result, "Title", "Memória completa!", 32f, 72f, 48f, 24f, 24f, true);
+            TMP_Text resultAttempts = AddText(
+                result,
+                "Result Attempts",
+                "Você encontrou os 6 pares!",
+                20f,
+                184f,
+                64f,
+                32f,
+                32f,
+                false,
+                SolarARColors.OnDark);
+            TMP_Text[] resultStars = BuildTextStars(result, 280f);
+            AddText(
+                result,
+                "Result Message",
+                "Excelente memória, explorador! Cada planeta encontrou seu par.",
+                18f,
+                360f,
+                88f,
+                40f,
+                40f,
+                false,
+                SolarARColors.Lavender);
+            Button replay = AddButton(
+                result, "Replay Memory Button", "Jogar novamente", SolarARColors.Primary,
+                SolarARColors.Ink, 504f, 64f, 40f, 40f, 24f, 20f, true);
+            Wire(replay, controller.StartNewGame);
+
+            SerializedObject data = new(controller);
+            SetObject(data, "_boardRoot", board.gameObject);
+            SetObject(data, "_resultRoot", result.gameObject);
+            SetObjectArray(data, "_cardButtons", cardButtons);
+            SetObjectArray(data, "_cardImages", cardImages);
+            SetObjectArray(data, "_cardLabels", cardLabels);
+            SetObject(data, "_pairsText", pairsText);
+            SetObject(data, "_attemptsText", attemptsText);
+            SetObject(data, "_resultAttemptsText", resultAttempts);
+            SetObjectArray(data, "_resultStars", resultStars);
+            data.ApplyModifiedPropertiesWithoutUndo();
+
+            board.gameObject.SetActive(true);
+            result.gameObject.SetActive(false);
+            return root.gameObject;
+        }
+
+        private static GameObject BuildPlanetOrderGame(
+            RectTransform parent,
+            MissionHubController hubController,
+            out PlanetOrderScreenController controller)
+        {
+            RectTransform root = CreateScreen("Planet Order Game", parent);
+            controller = root.gameObject.AddComponent<PlanetOrderScreenController>();
+
+            RectTransform game = CreateScreen("Planet Order Board", root);
+            AddMissionBackButton(game, hubController);
+            AddText(game, "Title", "Ordem Planetária", 28f, 20f, 44f, 116f, 24f, true);
+            AddText(
+                game,
+                "Scope Note",
+                "Organize pela distância ao Sol. Esta atividade usa apenas os 7 planetas disponíveis no SolarAR; não é a lista completa do Sistema Solar.",
+                13f,
+                72f,
+                64f,
+                24f,
+                24f,
+                false,
+                SolarARColors.Lavender);
+
+            Button[] positionButtons = new Button[7];
+            Graphic[] positionBackgrounds = new Graphic[7];
+            RawImage[] planetImages = new RawImage[7];
+            TMP_Text[] planetLabels = new TMP_Text[7];
+            for (int index = 0; index < positionButtons.Length; index++)
+            {
+                RectTransform position = _ui.Panel(
+                    $"Order Position {index + 1}", game, SolarARColors.Panel, 16f);
+                SolarARUIFactory.Top(position, 146f + index * 62f, 54f, 32f, 32f);
+                Button button = position.gameObject.AddComponent<Button>();
+                button.targetGraphic = position.GetComponent<Graphic>();
+                button.targetGraphic.raycastTarget = true;
+
+                GameObject imageObject = new(
+                    "Planet Image",
+                    typeof(RectTransform),
+                    typeof(CanvasRenderer),
+                    typeof(RawImage));
+                RectTransform imageRect = imageObject.GetComponent<RectTransform>();
+                imageRect.SetParent(position, false);
+                SolarARUIFactory.Place(
+                    imageRect,
+                    8f,
+                    0f,
+                    44f,
+                    44f,
+                    new Vector2(0f, 0.5f),
+                    new Vector2(0f, 0.5f));
+                RawImage image = imageObject.GetComponent<RawImage>();
+                image.raycastTarget = false;
+
+                TMP_Text label = _ui.Text(
+                    "Planet Label",
+                    position,
+                    $"{index + 1}. Planeta",
+                    17f,
+                    SolarARColors.Ink,
+                    TextAlignmentOptions.MidlineLeft,
+                    false,
+                    FontStyles.Bold);
+                SolarARUIFactory.Stretch(label.rectTransform, 64f, 6f, 12f, 6f);
+                WireInt(button, controller.SelectPosition, index);
+                positionButtons[index] = button;
+                positionBackgrounds[index] = position.GetComponent<Graphic>();
+                planetImages[index] = image;
+                planetLabels[index] = label;
+            }
+
+            TMP_Text checksText = AddText(
+                game, "Checks", "Conferências: 0", 15f, 584f, 24f, 32f, 32f, false,
+                SolarARColors.Lavender, TextAlignmentOptions.Center, FontStyles.Bold);
+            Button checkButton = AddButton(
+                game, "Check Order Button", "Conferir ordem", SolarARColors.Primary,
+                SolarARColors.Ink, 616f, 56f, 48f, 48f, 22f, 18f, true);
+            Wire(checkButton, controller.CheckOrder);
+            TMP_Text feedback = AddText(
+                game,
+                "Order Feedback",
+                "Selecione um planeta e depois a posição de destino.",
+                14f,
+                680f,
+                40f,
+                32f,
+                32f,
+                false,
+                SolarARColors.OnDark);
+
+            RectTransform result = CreateScreen("Planet Order Result", root);
+            AddMissionBackButton(result, hubController);
+            AddText(result, "Title", "Ordem correta!", 32f, 72f, 48f, 24f, 24f, true);
+            TMP_Text resultChecks = AddText(
+                result, "Result Checks", "Ordem correta!", 20f, 184f, 48f, 32f, 32f,
+                false, SolarARColors.OnDark);
+            TMP_Text[] resultStars = BuildTextStars(result, 264f);
+            AddText(
+                result,
+                "Educational Curiosity",
+                "Curiosidade: quanto mais distante do Sol, maior costuma ser o caminho da órbita. Netuno leva cerca de 165 anos terrestres para completar uma volta!",
+                18f,
+                344f,
+                120f,
+                40f,
+                40f,
+                false,
+                SolarARColors.Lavender);
+            Button replay = AddButton(
+                result, "Replay Order Button", "Jogar novamente", SolarARColors.Primary,
+                SolarARColors.Ink, 520f, 64f, 40f, 40f, 24f, 20f, true);
+            Wire(replay, controller.StartNewGame);
+
+            SerializedObject data = new(controller);
+            SetObject(data, "_gameRoot", game.gameObject);
+            SetObject(data, "_resultRoot", result.gameObject);
+            SetObjectArray(data, "_positionButtons", positionButtons);
+            SetObjectArray(data, "_positionBackgrounds", positionBackgrounds);
+            SetObjectArray(data, "_planetImages", planetImages);
+            SetObjectArray(data, "_planetLabels", planetLabels);
+            SetObject(data, "_checksText", checksText);
+            SetObject(data, "_feedbackText", feedback);
+            SetObject(data, "_resultChecksText", resultChecks);
+            SetObjectArray(data, "_resultStars", resultStars);
+            data.ApplyModifiedPropertiesWithoutUndo();
+
+            game.gameObject.SetActive(true);
+            result.gameObject.SetActive(false);
+            return root.gameObject;
+        }
+
+        private static GameObject BuildSpaceDetectiveGame(
+            RectTransform parent,
+            MissionHubController hubController,
+            out SpaceDetectiveScreenController controller)
+        {
+            RectTransform root = CreateScreen("Space Detective Game", parent);
+            controller = root.gameObject.AddComponent<SpaceDetectiveScreenController>();
+
+            RectTransform game = CreateScreen("Space Detective Challenge", root);
+            AddMissionBackButton(game, hubController);
+            AddText(game, "Title", "Detetive Espacial", 28f, 20f, 44f, 116f, 24f, true);
+            TMP_Text progress = AddText(
+                game, "Challenge Progress", "Desafio 1/5", 15f, 70f, 28f, 24f, 190f,
+                false, SolarARColors.Lavender, TextAlignmentOptions.MidlineLeft, FontStyles.Bold);
+            TMP_Text score = AddText(
+                game, "Score", "Pontos: 0/50", 15f, 70f, 28f, 190f, 24f,
+                false, SolarARColors.Lavender, TextAlignmentOptions.MidlineRight, FontStyles.Bold);
+
+            RectTransform cluePanel = _ui.Panel(
+                "Clues Panel", game, SolarARColors.Panel, 20f);
+            SolarARUIFactory.Top(cluePanel, 106f, 178f, 24f, 24f);
+            AddText(
+                cluePanel, "Clue Header", "PLANETA MISTERIOSO", 14f, 12f, 24f, 16f, 16f,
+                false, SolarARColors.Blue1, TextAlignmentOptions.Center, FontStyles.Bold);
+            TMP_Text clues = AddText(
+                cluePanel,
+                "Visible Clues",
+                "1. Aqui aparece a primeira pista.",
+                15f,
+                42f,
+                124f,
+                16f,
+                16f,
+                false,
+                SolarARColors.Ink,
+                TextAlignmentOptions.TopLeft);
+
+            TMP_Text clueCount = AddText(
+                game, "Clue Count", "Pistas: 1/3", 14f, 294f, 40f, 32f, 204f,
+                false, SolarARColors.Lavender, TextAlignmentOptions.MidlineLeft, FontStyles.Bold);
+            Button clueButton = AddButton(
+                game, "More Clue Button", "Pedir outra pista", SolarARColors.Blue4,
+                SolarARColors.OnDark, 292f, 48f, 184f, 32f, 18f, 15f, false);
+            Wire(clueButton, controller.RevealNextClue);
+
+            Button[] answerButtons = new Button[3];
+            TMP_Text[] answerLabels = new TMP_Text[3];
+            Graphic[] answerBackgrounds = new Graphic[3];
+            for (int index = 0; index < answerButtons.Length; index++)
+            {
+                Button answer = AddButton(
+                    game,
+                    $"Detective Answer {index + 1}",
+                    $"Planeta {index + 1}",
+                    SolarARColors.Secondary,
+                    SolarARColors.Ink,
+                    356f + index * 60f,
+                    52f,
+                    32f,
+                    32f,
+                    18f,
+                    17f,
+                    true);
+                WireInt(answer, controller.SelectAnswer, index);
+                answerButtons[index] = answer;
+                answerLabels[index] = answer.GetComponentInChildren<TMP_Text>();
+                answerBackgrounds[index] = answer.targetGraphic;
+            }
+
+            RectTransform feedbackPanel = _ui.Panel(
+                "Detective Feedback", game, SolarARColors.Panel, 20f);
+            SolarARUIFactory.Top(feedbackPanel, 544f, 108f, 24f, 24f);
+            TMP_Text feedbackTitle = AddText(
+                feedbackPanel, "Feedback Title", "Correto!", 16f, 10f, 30f, 88f, 16f,
+                false, SolarARColors.Ink, TextAlignmentOptions.MidlineLeft, FontStyles.Bold);
+            TMP_Text feedbackExplanation = AddText(
+                feedbackPanel, "Feedback Explanation", "Explicação educativa.", 14f, 38f,
+                60f, 88f, 16f, false, SolarARColors.Ink, TextAlignmentOptions.TopLeft);
+            GameObject revealedPlanetObject = new(
+                "Revealed Planet Image",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(RawImage));
+            RectTransform revealedPlanetRect = revealedPlanetObject.GetComponent<RectTransform>();
+            revealedPlanetRect.SetParent(feedbackPanel, false);
+            SolarARUIFactory.Place(
+                revealedPlanetRect,
+                12f,
+                0f,
+                64f,
+                64f,
+                new Vector2(0f, 0.5f),
+                new Vector2(0f, 0.5f));
+            RawImage revealedPlanetImage = revealedPlanetObject.GetComponent<RawImage>();
+            revealedPlanetImage.raycastTarget = false;
+            Button nextButton = AddButton(
+                game, "Next Detective Challenge", "Próximo desafio", SolarARColors.Primary,
+                SolarARColors.Ink, 664f, 52f, 48f, 48f, 20f, 17f, true);
+            TMP_Text nextLabel = nextButton.GetComponentInChildren<TMP_Text>();
+            nextButton.interactable = false;
+            Wire(nextButton, controller.NextChallenge);
+
+            RectTransform result = CreateScreen("Space Detective Result", root);
+            AddMissionBackButton(result, hubController);
+            AddText(result, "Title", "Mistério resolvido!", 32f, 72f, 48f, 24f, 24f, true);
+            TMP_Text resultScore = AddText(
+                result, "Result Score", "50/50 pontos", 30f, 190f, 48f, 32f, 32f,
+                true, SolarARColors.Primary);
+            TMP_Text[] resultStars = BuildTextStars(result, 270f);
+            AddText(
+                result,
+                "Result Message",
+                "Você investigou cinco planetas usando pistas científicas. Excelente trabalho, detetive!",
+                18f,
+                360f,
+                88f,
+                40f,
+                40f,
+                false,
+                SolarARColors.Lavender);
+            Button replay = AddButton(
+                result, "Replay Detective Button", "Jogar novamente", SolarARColors.Primary,
+                SolarARColors.Ink, 504f, 64f, 40f, 40f, 24f, 20f, true);
+            Wire(replay, controller.StartNewGame);
+
+            SerializedObject data = new(controller);
+            SetObject(data, "_gameRoot", game.gameObject);
+            SetObject(data, "_resultRoot", result.gameObject);
+            SetObject(data, "_progressText", progress);
+            SetObject(data, "_scoreText", score);
+            SetObject(data, "_cluesText", clues);
+            SetObject(data, "_clueCountText", clueCount);
+            SetObject(data, "_moreClueButton", clueButton);
+            SetObjectArray(data, "_answerButtons", answerButtons);
+            SetObjectArray(data, "_answerLabels", answerLabels);
+            SetObjectArray(data, "_answerBackgrounds", answerBackgrounds);
+            SetObject(data, "_feedbackPanel", feedbackPanel.gameObject);
+            SetObject(data, "_feedbackTitleText", feedbackTitle);
+            SetObject(data, "_feedbackExplanationText", feedbackExplanation);
+            SetObject(data, "_revealedPlanetImage", revealedPlanetImage);
+            SetObject(data, "_nextButton", nextButton);
+            SetObject(data, "_nextButtonLabel", nextLabel);
+            SetObject(data, "_resultScoreText", resultScore);
+            SetObjectArray(data, "_resultStars", resultStars);
+            data.ApplyModifiedPropertiesWithoutUndo();
+
+            game.gameObject.SetActive(true);
+            result.gameObject.SetActive(false);
+            feedbackPanel.gameObject.SetActive(false);
+            return root.gameObject;
+        }
+
+        private static TMP_Text[] BuildTextStars(Transform parent, float top)
+        {
+            TMP_Text[] stars = new TMP_Text[3];
+            for (int index = 0; index < stars.Length; index++)
+            {
+                TMP_Text star = _ui.Text(
+                    $"Star {index + 1}",
+                    parent,
+                    "★",
+                    46f,
+                    SolarARColors.Primary,
+                    TextAlignmentOptions.Center,
+                    true,
+                    FontStyles.Bold);
+                SolarARUIFactory.Place(
+                    star.rectTransform,
+                    (index - 1) * 58f,
+                    -top,
+                    52f,
+                    52f,
+                    new Vector2(0.5f, 1f),
+                    new Vector2(0.5f, 1f));
+                stars[index] = star;
+            }
+
+            return stars;
         }
 
         private static RectTransform CreateScreen(string name, Transform parent)
@@ -2402,8 +3589,10 @@ namespace SolarAR.Editor
             SetObject(serialized, "_bottomNavigation", references.BottomNavigation);
             SetObject(serialized, "_exploreTabBackground", references.ExploreTabBackground);
             SetObject(serialized, "_planetsTabBackground", references.PlanetsTabBackground);
+            SetObject(serialized, "_missionsTabBackground", references.MissionsTabBackground);
             SetObject(serialized, "_exploreTabText", references.ExploreTabText);
             SetObject(serialized, "_planetsTabText", references.PlanetsTabText);
+            SetObject(serialized, "_missionsTabText", references.MissionsTabText);
             SetObject(serialized, "_permissionExplanation", references.PermissionExplanation);
             SetObject(serialized, "_onboardingScreen", references.Onboarding);
             SetObject(serialized, "_permissionScreen", references.Permission);
@@ -2415,6 +3604,8 @@ namespace SolarAR.Editor
             SetObject(serialized, "_lostScreen", references.Lost);
             SetObject(serialized, "_planetsScreen", references.Planets);
             SetObject(serialized, "_planetDetailScreen", references.PlanetDetail);
+            SetObject(serialized, "_missionsScreen", references.Missions);
+            SetObject(serialized, "_missionHubController", references.MissionHubController);
             SetObject(serialized, "_planetNameText", references.PlanetName);
             SetObject(serialized, "_firstFactText", references.FirstFact);
             SetObject(serialized, "_secondFactText", references.SecondFact);
@@ -2432,10 +3623,9 @@ namespace SolarAR.Editor
                 serialized,
                 "_curiositySecondFactBackground",
                 references.CuriositySecondFactBackground);
+            SetObjectArray(serialized, "_planetGalleryImages", references.PlanetGalleryImages);
             SetObject(serialized, "_detailPlanetNameText", references.DetailPlanetName);
-            SetObject(serialized, "_detailPanelNameText", references.DetailPanelName);
-            SetObject(serialized, "_detailFirstFactText", references.DetailFirstFact);
-            SetObject(serialized, "_detailSecondFactText", references.DetailSecondFact);
+            SetObject(serialized, "_factCarouselController", references.FactCarouselController);
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -2448,6 +3638,35 @@ namespace SolarAR.Editor
             }
 
             property.objectReferenceValue = value;
+        }
+
+        private static void SetObjectArray<T>(
+            SerializedObject serialized,
+            string propertyName,
+            IReadOnlyList<T> values)
+            where T : UnityEngine.Object
+        {
+            SerializedProperty property = serialized.FindProperty(propertyName);
+            if (property == null || !property.isArray)
+            {
+                throw new InvalidOperationException($"Serialized array property not found: {propertyName}");
+            }
+
+            property.arraySize = values.Count;
+            for (int index = 0; index < values.Count; index++)
+            {
+                property.GetArrayElementAtIndex(index).objectReferenceValue = values[index];
+            }
+        }
+
+        private static void ValidateSingleComponent<T>(ICollection<string> errors)
+            where T : Component
+        {
+            T[] components = UnityEngine.Object.FindObjectsByType<T>(FindObjectsInactive.Include);
+            if (components.Length != 1)
+            {
+                errors.Add($"Expected one {typeof(T).Name}, found {components.Length}.");
+            }
         }
 
         private static void SetInitialScreenStates(SceneReferences references)
@@ -2464,6 +3683,7 @@ namespace SolarAR.Editor
             references.Lost.SetActive(false);
             references.Planets.SetActive(false);
             references.PlanetDetail.SetActive(false);
+            references.Missions.SetActive(false);
             references.BottomNavigation.SetActive(false);
         }
 

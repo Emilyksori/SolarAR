@@ -1,0 +1,15 @@
+{
+  "name": "SolarAR.Games.Memory.EditModeTests",
+  "rootNamespace": "SolarAR.Games.Memory.Tests",
+  "references": [
+    "SolarAR.Games.Memory",
+    "SolarAR.Games.Shared"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": false
+}

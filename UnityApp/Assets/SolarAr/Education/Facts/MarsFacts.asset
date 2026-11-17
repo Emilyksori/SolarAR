@@ -14,7 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: mars
   _facts:
-  - _title: "P\xF4r do sol azul"
-    _description: "Em Marte, o p\xF4r do sol pode parecer azul em vez de vermelho."
-  - _title: "Vulc\xE3o gigante"
-    _description: "O Monte Olimpo \xE9 um vulc\xE3o quase tr\xEAs vezes mais alto que o Everest."
+  - _id: mars-01-red-dust
+    _title: Poeira vermelha
+    _description: O ferro presente no solo enferrujou e deu a Marte sua cor avermelhada.
+    _category: 1
+    _order: 1
+    _visual: {fileID: 0}
+  - _id: mars-02-olympus-mons
+    _title: "Vulc\xE3o gigante"
+    _description: "O Monte Olimpo \xE9 o maior vulc\xE3o conhecido do Sistema Solar."
+    _category: 1
+    _order: 2
+    _visual: {fileID: 0}
+  - _id: mars-03-valles-marineris
+    _title: "C\xE2nion enorme"
+    _description: "Marte possui um sistema de c\xE2nions que atravessaria muitos pa\xEDses da Terra."
+    _category: 1
+    _order: 3
+    _visual: {fileID: 0}
+  - _id: mars-04-two-moons
+    _title: Duas pequenas luas
+    _description: "Fobos e Deimos s\xE3o as duas luas pequenas e irregulares de Marte."
+    _category: 4
+    _order: 4
+    _visual: {fileID: 0}
+  - _id: mars-05-familiar-day
+    _title: Dia parecido
+    _description: Um dia marciano dura cerca de 24 horas e 39 minutos.
+    _category: 0
+    _order: 5
+    _visual: {fileID: 0}
+  - _id: mars-06-ice-caps
+    _title: Calotas de gelo
+    _description: "Os polos marcianos t\xEAm gelo de \xE1gua e gelo de g\xE1s carb\xF4nico."
+    _category: 7
+    _order: 6
+    _visual: {fileID: 0}
+  - _id: mars-07-ancient-water
+    _title: Rios do passado
+    _description: "Marcas no terreno indicam que rios e lagos existiram h\xE1 muito tempo."
+    _category: 7
+    _order: 7
+    _visual: {fileID: 0}
+  - _id: mars-08-blue-sunset
+    _title: "P\xF4r do sol azul"
+    _description: "A poeira fina faz o c\xE9u perto do Sol parecer azulado no entardecer."
+    _category: 2
+    _order: 8
+    _visual: {fileID: 0}

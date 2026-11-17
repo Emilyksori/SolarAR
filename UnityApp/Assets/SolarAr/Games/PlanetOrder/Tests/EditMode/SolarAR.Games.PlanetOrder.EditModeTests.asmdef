@@ -1,0 +1,15 @@
+{
+  "name": "SolarAR.Games.PlanetOrder.EditModeTests",
+  "rootNamespace": "SolarAR.Games.PlanetOrder.Tests",
+  "references": [
+    "SolarAR.Games.PlanetOrder",
+    "SolarAR.Games.Shared"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": false
+}
