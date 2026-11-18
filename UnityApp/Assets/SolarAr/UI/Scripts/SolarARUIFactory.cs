@@ -8,6 +8,10 @@ namespace SolarAR.UI
     public static class SolarARColors
     {
         public static readonly Color Night = Hex("0A1433");
+        public static readonly Color DeepSpace = Hex("080B24");
+        public static readonly Color SpaceCard = Hex("182852");
+        public static readonly Color Purple = Hex("6D4AFF");
+        public static readonly Color Magenta = Hex("E650B7");
         public static readonly Color Ink = Hex("19365B");
         public static readonly Color Blue1 = Hex("387ED8");
         public static readonly Color Blue4 = Hex("294671");

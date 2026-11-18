@@ -1,0 +1,365 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e75226cccbc0c39a7d5b561fa9d2e9, type: 3}
+  m_Name: QuizQuestionBank
+  m_EditorClassIdentifier: SolarAR.Games.Quiz::SolarAR.Games.Quiz.QuizQuestionBank
+  _questions:
+  - _id: mercury-01
+    _planetKey: mercury
+    _difficulty: 0
+    _prompt: Qual planeta fica mais perto do Sol?
+    _alternatives:
+    - "Merc\xFArio"
+    - Marte
+    - Netuno
+    _correctAlternativeIndex: 0
+    _explanation: "Merc\xFArio \xE9 o planeta mais pr\xF3ximo do Sol."
+  - _id: mercury-02
+    _planetKey: mercury
+    _difficulty: 0
+    _prompt: "Como Merc\xFArio se compara aos outros planetas em tamanho?"
+    _alternatives:
+    - "\xC9 o maior"
+    - "\xC9 o menor"
+    - Tem o mesmo tamanho da Terra
+    _correctAlternativeIndex: 1
+    _explanation: "Merc\xFArio \xE9 o menor planeta do Sistema Solar."
+  - _id: mercury-03
+    _planetKey: mercury
+    _difficulty: 1
+    _prompt: "Um ano em Merc\xFArio dura aproximadamente quantos dias da Terra?"
+    _alternatives:
+    - 365 dias
+    - 687 dias
+    - 88 dias
+    _correctAlternativeIndex: 2
+    _explanation: "Merc\xFArio completa uma volta ao redor do Sol em cerca de 88 dias terrestres."
+  - _id: mercury-04
+    _planetKey: mercury
+    _difficulty: 1
+    _prompt: "Como \xE9 a camada de gases ao redor de Merc\xFArio?"
+    _alternatives:
+    - "\xC9 espessa e respir\xE1vel"
+    - "\xC9 extremamente fina"
+    - "\xC9 cheia de nuvens de \xE1gua"
+    _correctAlternativeIndex: 1
+    _explanation: "Merc\xFArio tem uma camada de gases muito fina, chamada exosfera."
+  - _id: mercury-05
+    _planetKey: mercury
+    _difficulty: 2
+    _prompt: "O que pode existir em crateras muito escuras nos polos de Merc\xFArio?"
+    _alternatives:
+    - "Gelo de \xE1gua"
+    - Florestas
+    - Oceanos quentes
+    _correctAlternativeIndex: 0
+    _explanation: "Algumas crateras polares nunca recebem luz direta e podem guardar gelo de \xE1gua."
+  - _id: earth-01
+    _planetKey: earth
+    _difficulty: 0
+    _prompt: "O que cobre a maior parte da superf\xEDcie da Terra?"
+    _alternatives:
+    - Areia
+    - Gelo
+    - "\xC1gua l\xEDquida"
+    _correctAlternativeIndex: 2
+    _explanation: "Oceanos de \xE1gua l\xEDquida cobrem a maior parte da superf\xEDcie terrestre."
+  - _id: earth-02
+    _planetKey: earth
+    _difficulty: 0
+    _prompt: "Qual caracter\xEDstica torna a Terra especial entre os mundos conhecidos?"
+    _alternatives:
+    - Tem vida conhecida
+    - "\xC9 o maior planeta"
+    - "N\xE3o possui atmosfera"
+    _correctAlternativeIndex: 0
+    _explanation: "At\xE9 hoje, a Terra \xE9 o \xFAnico mundo onde sabemos que existe vida."
+  - _id: earth-03
+    _planetKey: earth
+    _difficulty: 1
+    _prompt: Quantas luas naturais a Terra possui?
+    _alternatives:
+    - Nenhuma
+    - Uma
+    - Duas
+    _correctAlternativeIndex: 1
+    _explanation: A Terra possui uma lua natural, chamada Lua.
+  - _id: earth-04
+    _planetKey: earth
+    _difficulty: 1
+    _prompt: Quanto tempo a Terra leva, aproximadamente, para dar uma volta em torno de si mesma?
+    _alternatives:
+    - Uma semana
+    - "Um m\xEAs"
+    - Um dia
+    _correctAlternativeIndex: 2
+    _explanation: "A rota\xE7\xE3o da Terra dura cerca de 24 horas e forma o dia e a noite."
+  - _id: earth-05
+    _planetKey: earth
+    _difficulty: 2
+    _prompt: "O que o campo magn\xE9tico da Terra ajuda a fazer?"
+    _alternatives:
+    - "Proteger o planeta de part\xEDculas do Sol"
+    - Produzir a luz do Sol
+    - "Parar a rota\xE7\xE3o da Terra"
+    _correctAlternativeIndex: 0
+    _explanation: "O campo magn\xE9tico desvia muitas part\xEDculas carregadas que v\xEAm do Sol."
+  - _id: mars-01
+    _planetKey: mars
+    _difficulty: 0
+    _prompt: "Por que Marte \xE9 chamado de planeta vermelho?"
+    _alternatives:
+    - Por causa de plantas vermelhas
+    - Por causa do ferro oxidado no solo
+    - Por causa de lava cobrindo tudo
+    _correctAlternativeIndex: 1
+    _explanation: "Minerais com ferro oxidado d\xE3o ao solo marciano sua cor avermelhada."
+  - _id: mars-02
+    _planetKey: mars
+    _difficulty: 0
+    _prompt: Quantas luas naturais Marte possui?
+    _alternatives:
+    - Nenhuma
+    - Uma
+    - Duas
+    _correctAlternativeIndex: 2
+    _explanation: 'Marte possui duas pequenas luas: Fobos e Deimos.'
+  - _id: mars-03
+    _planetKey: mars
+    _difficulty: 1
+    _prompt: "Qual forma\xE7\xE3o gigante existe em Marte?"
+    _alternatives:
+    - "O vulc\xE3o Monte Olimpo"
+    - Uma floresta de gelo
+    - "Um oceano de \xE1gua l\xEDquida"
+    _correctAlternativeIndex: 0
+    _explanation: "O Monte Olimpo \xE9 um enorme vulc\xE3o e uma das maiores montanhas conhecidas do Sistema Solar."
+  - _id: mars-04
+    _planetKey: mars
+    _difficulty: 1
+    _prompt: "Como \xE9 a atmosfera de Marte?"
+    _alternatives:
+    - "Espessa e rica em oxig\xEAnio"
+    - "Fina e rica em g\xE1s carb\xF4nico"
+    - "Igual \xE0 atmosfera da Terra"
+    _correctAlternativeIndex: 1
+    _explanation: "A atmosfera marciana \xE9 fina e formada principalmente por di\xF3xido de carbono."
+  - _id: mars-05
+    _planetKey: mars
+    _difficulty: 2
+    _prompt: O que canais e minerais encontrados em Marte indicam?
+    _alternatives:
+    - Que Marte sempre foi seco
+    - "Que h\xE1 cidades escondidas"
+    - "Que \xE1gua l\xEDquida existiu no passado"
+    _correctAlternativeIndex: 2
+    _explanation: "Formas do terreno e minerais mostram que \xE1gua l\xEDquida correu em Marte h\xE1 muito tempo."
+  - _id: jupiter-01
+    _planetKey: jupiter
+    _difficulty: 0
+    _prompt: "Qual \xE9 o maior planeta do Sistema Solar?"
+    _alternatives:
+    - "J\xFApiter"
+    - Terra
+    - Saturno
+    _correctAlternativeIndex: 0
+    _explanation: "J\xFApiter \xE9 o maior planeta do Sistema Solar."
+  - _id: jupiter-02
+    _planetKey: jupiter
+    _difficulty: 0
+    _prompt: "Que tipo de planeta \xE9 J\xFApiter?"
+    _alternatives:
+    - Planeta rochoso
+    - Gigante gasoso
+    - "Planeta-an\xE3o"
+    _correctAlternativeIndex: 1
+    _explanation: "J\xFApiter \xE9 um gigante gasoso, formado principalmente por hidrog\xEAnio e h\xE9lio."
+  - _id: jupiter-03
+    _planetKey: jupiter
+    _difficulty: 1
+    _prompt: "O que \xE9 a Grande Mancha Vermelha de J\xFApiter?"
+    _alternatives:
+    - Um continente
+    - "Um vulc\xE3o"
+    - Uma enorme tempestade
+    _correctAlternativeIndex: 2
+    _explanation: "A Grande Mancha Vermelha \xE9 uma tempestade gigantesca observada h\xE1 muito tempo."
+  - _id: jupiter-04
+    _planetKey: jupiter
+    _difficulty: 1
+    _prompt: "Aproximadamente quanto dura um dia em J\xFApiter?"
+    _alternatives:
+    - 10 horas
+    - 24 horas
+    - 100 horas
+    _correctAlternativeIndex: 0
+    _explanation: "J\xFApiter gira muito r\xE1pido e completa uma rota\xE7\xE3o em cerca de 10 horas."
+  - _id: jupiter-05
+    _planetKey: jupiter
+    _difficulty: 2
+    _prompt: "Al\xE9m de muitas luas, o que J\xFApiter tamb\xE9m possui?"
+    _alternatives:
+    - "Uma superf\xEDcie s\xF3lida para caminhar"
+    - "An\xE9is finos e pouco brilhantes"
+    - "Oceanos de \xE1gua na superf\xEDcie"
+    _correctAlternativeIndex: 1
+    _explanation: "J\xFApiter possui an\xE9is t\xEAnues, bem menos vis\xEDveis que os de Saturno."
+  - _id: saturn-01
+    _planetKey: saturn
+    _difficulty: 0
+    _prompt: "Do que s\xE3o feitos principalmente os an\xE9is de Saturno?"
+    _alternatives:
+    - "Fuma\xE7a"
+    - "Luz s\xF3lida"
+    - Gelo e rocha
+    _correctAlternativeIndex: 2
+    _explanation: "Os an\xE9is de Saturno s\xE3o formados por incont\xE1veis peda\xE7os de gelo e rocha."
+  - _id: saturn-02
+    _planetKey: saturn
+    _difficulty: 0
+    _prompt: "Que tipo de planeta \xE9 Saturno?"
+    _alternatives:
+    - Gigante gasoso
+    - Planeta rochoso
+    - "Planeta-an\xE3o"
+    _correctAlternativeIndex: 0
+    _explanation: "Saturno \xE9 um gigante gasoso, assim como J\xFApiter."
+  - _id: saturn-03
+    _planetKey: saturn
+    _difficulty: 1
+    _prompt: "O que \xE9 curioso sobre a densidade de Saturno?"
+    _alternatives:
+    - "\xC9 menor que a da \xE1gua"
+    - "\xC9 igual \xE0 do ferro"
+    - "\xC9 a maior entre os planetas"
+    _correctAlternativeIndex: 0
+    _explanation: "Saturno \xE9 menos denso que a \xE1gua, embora n\xE3o exista um oceano grande o bastante para test\xE1-lo."
+  - _id: saturn-04
+    _planetKey: saturn
+    _difficulty: 1
+    _prompt: "Qual destas \xE9 uma grande lua de Saturno?"
+    _alternatives:
+    - Fobos
+    - "Trit\xE3o"
+    - "Tit\xE3"
+    _correctAlternativeIndex: 2
+    _explanation: "Tit\xE3 \xE9 a maior lua de Saturno e possui uma atmosfera espessa."
+  - _id: saturn-05
+    _planetKey: saturn
+    _difficulty: 2
+    _prompt: "Os an\xE9is de Saturno formam uma \xFAnica placa inteira?"
+    _alternatives:
+    - "N\xE3o, s\xE3o muitas faixas com incont\xE1veis peda\xE7os"
+    - "Sim, s\xE3o uma placa s\xF3lida"
+    - "Sim, s\xE3o uma \xFAnica nuvem"
+    _correctAlternativeIndex: 0
+    _explanation: "Os an\xE9is s\xE3o divididos em muitas faixas e feitos de incont\xE1veis part\xEDculas."
+  - _id: uranus-01
+    _planetKey: uranus
+    _difficulty: 0
+    _prompt: "O que torna a rota\xE7\xE3o de Urano diferente?"
+    _alternatives:
+    - "Ele n\xE3o gira"
+    - Ele gira quase de lado
+    - Ele gira ao redor da Terra
+    _correctAlternativeIndex: 1
+    _explanation: "O eixo de Urano \xE9 muito inclinado, por isso ele parece girar de lado."
+  - _id: uranus-02
+    _planetKey: uranus
+    _difficulty: 0
+    _prompt: "Que tipo de planeta \xE9 Urano?"
+    _alternatives:
+    - Planeta rochoso
+    - Gigante gasoso quente
+    - Gigante de gelo
+    _correctAlternativeIndex: 2
+    _explanation: "Urano \xE9 classificado como gigante de gelo por sua composi\xE7\xE3o e temperatura."
+  - _id: uranus-03
+    _planetKey: uranus
+    _difficulty: 1
+    _prompt: "Qual g\xE1s ajuda a dar a Urano sua cor azul-esverdeada?"
+    _alternatives:
+    - Metano
+    - "Oxig\xEAnio"
+    - Vapor de ferro
+    _correctAlternativeIndex: 0
+    _explanation: O metano na atmosfera absorve parte da luz vermelha e ajuda a criar a cor azul-esverdeada.
+  - _id: uranus-04
+    _planetKey: uranus
+    _difficulty: 1
+    _prompt: "Urano possui an\xE9is?"
+    _alternatives:
+    - "N\xE3o possui"
+    - "Sim, possui an\xE9is discretos"
+    - Possui apenas um anel de fogo
+    _correctAlternativeIndex: 1
+    _explanation: "Urano possui um sistema de an\xE9is escuros e menos vis\xEDveis que os de Saturno."
+  - _id: uranus-05
+    _planetKey: uranus
+    _difficulty: 2
+    _prompt: "Por que as esta\xE7\xF5es de Urano s\xE3o t\xE3o longas?"
+    _alternatives:
+    - "Porque ele n\xE3o recebe luz"
+    - "Porque n\xE3o gira"
+    - "Porque sua \xF3rbita \xE9 longa e seu eixo \xE9 muito inclinado"
+    _correctAlternativeIndex: 2
+    _explanation: "A longa volta ao redor do Sol e a grande inclina\xE7\xE3o fazem cada esta\xE7\xE3o durar muitos anos terrestres."
+  - _id: neptune-01
+    _planetKey: neptune
+    _difficulty: 0
+    _prompt: "Qual \xE9 o planeta mais distante do Sol entre os oito planetas?"
+    _alternatives:
+    - Netuno
+    - Saturno
+    - Marte
+    _correctAlternativeIndex: 0
+    _explanation: "Netuno \xE9 o planeta mais distante do Sol na classifica\xE7\xE3o atual dos oito planetas."
+  - _id: neptune-02
+    _planetKey: neptune
+    _difficulty: 0
+    _prompt: "Que tipo de planeta \xE9 Netuno?"
+    _alternatives:
+    - Planeta rochoso
+    - Gigante gasoso quente
+    - Gigante de gelo
+    _correctAlternativeIndex: 2
+    _explanation: "Netuno \xE9 um gigante de gelo, assim como Urano."
+  - _id: neptune-03
+    _planetKey: neptune
+    _difficulty: 1
+    _prompt: O que se destaca na atmosfera de Netuno?
+    _alternatives:
+    - "Aus\xEAncia de ventos"
+    - "Ventos extremamente r\xE1pidos"
+    - "Ar respir\xE1vel"
+    _correctAlternativeIndex: 1
+    _explanation: "Netuno possui alguns dos ventos mais r\xE1pidos observados no Sistema Solar."
+  - _id: neptune-04
+    _planetKey: neptune
+    _difficulty: 1
+    _prompt: "Qual \xE9 a maior lua de Netuno?"
+    _alternatives:
+    - "Trit\xE3o"
+    - "Tit\xE3"
+    - Deimos
+    _correctAlternativeIndex: 0
+    _explanation: "Trit\xE3o \xE9 a maior lua de Netuno e percorre sua \xF3rbita em sentido incomum."
+  - _id: neptune-05
+    _planetKey: neptune
+    _difficulty: 2
+    _prompt: Aproximadamente quanto tempo Netuno leva para dar uma volta ao redor do Sol?
+    _alternatives:
+    - Um ano terrestre
+    - Doze anos terrestres
+    - Cerca de 165 anos terrestres
+    _correctAlternativeIndex: 2
+    _explanation: "Por estar muito distante do Sol, Netuno leva cerca de 165 anos terrestres para completar sua \xF3rbita."

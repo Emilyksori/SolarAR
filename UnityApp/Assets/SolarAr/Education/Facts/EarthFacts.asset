@@ -14,7 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: earth
   _facts:
-  - _title: Planeta inquieto
-    _description: "Os continentes se movem alguns cent\xEDmetros por ano, quase como unhas crescendo."
-  - _title: "Escudo invis\xEDvel"
-    _description: "O campo magn\xE9tico da Terra ajuda a nos proteger das part\xEDculas do Sol."
+  - _id: earth-01-water-world
+    _title: Planeta azul
+    _description: "A \xE1gua cobre a maior parte da superf\xEDcie da Terra."
+    _category: 7
+    _order: 1
+    _visual: {fileID: 0}
+  - _id: earth-02-known-life
+    _title: Casa da vida
+    _description: "A Terra \xE9 o \xFAnico mundo onde sabemos que existe vida."
+    _category: 7
+    _order: 2
+    _visual: {fileID: 0}
+  - _id: earth-03-moving-plates
+    _title: Planeta inquieto
+    _description: "Grandes placas da crosta se movem lentamente e mudam a superf\xEDcie."
+    _category: 1
+    _order: 3
+    _visual: {fileID: 0}
+  - _id: earth-04-magnetic-shield
+    _title: "Escudo invis\xEDvel"
+    _description: "O campo magn\xE9tico ajuda a proteger o planeta de part\xEDculas vindas do Sol."
+    _category: 5
+    _order: 4
+    _visual: {fileID: 0}
+  - _id: earth-05-one-moon
+    _title: Nossa Lua
+    _description: "A Lua ajuda a produzir as mar\xE9s nos oceanos da Terra."
+    _category: 4
+    _order: 5
+    _visual: {fileID: 0}
+  - _id: earth-06-air-mixture
+    _title: Ar para respirar
+    _description: "A atmosfera \xE9 formada principalmente por nitrog\xEAnio e oxig\xEAnio."
+    _category: 2
+    _order: 6
+    _visual: {fileID: 0}
+  - _id: earth-07-one-day
+    _title: Um giro por dia
+    _description: "A Terra leva cerca de 24 horas para completar uma rota\xE7\xE3o."
+    _category: 0
+    _order: 7
+    _visual: {fileID: 0}
+  - _id: earth-08-one-year
+    _title: Caminho anual
+    _description: Uma volta ao redor do Sol dura aproximadamente 365 dias.
+    _category: 0
+    _order: 8
+    _visual: {fileID: 0}

@@ -1,0 +1,6 @@
+{
+  "name": "SolarAR.Games.Shared",
+  "rootNamespace": "SolarAR.Games.Shared",
+  "references": [],
+  "autoReferenced": true
+}

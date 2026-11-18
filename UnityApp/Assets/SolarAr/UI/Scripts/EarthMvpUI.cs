@@ -25,7 +25,8 @@ namespace SolarAR.UI
             Information,
             Lost,
             Planets,
-            PlanetDetail
+            PlanetDetail,
+            Missions
         }
 
         private static readonly string[] PlanetOrder =
@@ -56,8 +57,10 @@ namespace SolarAR.UI
         [SerializeField] private GameObject _bottomNavigation;
         [SerializeField] private Graphic _exploreTabBackground;
         [SerializeField] private Graphic _planetsTabBackground;
+        [SerializeField] private Graphic _missionsTabBackground;
         [SerializeField] private TMP_Text _exploreTabText;
         [SerializeField] private TMP_Text _planetsTabText;
+        [SerializeField] private TMP_Text _missionsTabText;
         [SerializeField] private TMP_Text _permissionExplanation;
 
         [Header("Screens")]
@@ -71,6 +74,10 @@ namespace SolarAR.UI
         [SerializeField] private GameObject _lostScreen;
         [SerializeField] private GameObject _planetsScreen;
         [SerializeField] private GameObject _planetDetailScreen;
+        [SerializeField] private GameObject _missionsScreen;
+
+        [Header("Space missions")]
+        [SerializeField] private MissionHubController _missionHubController;
 
         [Header("AR educational panel")]
         [SerializeField] private TMP_Text _planetNameText;
@@ -88,10 +95,9 @@ namespace SolarAR.UI
         [SerializeField] private Graphic _curiositySecondFactBackground;
 
         [Header("Planet detail")]
+        [SerializeField] private RawImage[] _planetGalleryImages;
         [SerializeField] private TMP_Text _detailPlanetNameText;
-        [SerializeField] private TMP_Text _detailPanelNameText;
-        [SerializeField] private TMP_Text _detailFirstFactText;
-        [SerializeField] private TMP_Text _detailSecondFactText;
+        [SerializeField] private PlanetFactCarouselController _factCarouselController;
 
         [Header("Timing")]
         [SerializeField, Min(0f)] private float _exploreIntroductionSeconds = 1.5f;
@@ -104,6 +110,8 @@ namespace SolarAR.UI
         private bool _hasRecognizedCard;
         private bool _curiositiesOpen;
         private int _selectedPlanetIndex = 1;
+        private readonly Texture[] _planetThumbnails = new Texture[PlanetOrder.Length];
+        private Coroutine _thumbnailWarmup;
 
 #if UNITY_ANDROID
         private PermissionCallbacks _permissionCallbacks;
@@ -117,6 +125,7 @@ namespace SolarAR.UI
         private void Start()
         {
             PopulateArEducationalPanel(_planetKey);
+            _thumbnailWarmup = StartCoroutine(WarmPlanetThumbnails());
         }
 
         private void OnEnable()
@@ -133,6 +142,12 @@ namespace SolarAR.UI
 
         private void OnDisable()
         {
+            if (_thumbnailWarmup != null)
+            {
+                StopCoroutine(_thumbnailWarmup);
+                _thumbnailWarmup = null;
+            }
+
             if (_trackedImageHandler != null)
             {
                 _trackedImageHandler.TrackingStatusChanged -= OnTrackingStatusChanged;
@@ -185,6 +200,20 @@ namespace SolarAR.UI
             SetCuriositiesOpen(false);
             _arFlowActive = false;
             ShowScreen(ScreenId.Planets);
+        }
+
+        public void ShowMissions()
+        {
+            if (_currentScreen == ScreenId.Missions)
+            {
+                return;
+            }
+
+            StopExploreIntroduction();
+            SetCuriositiesOpen(false);
+            _arFlowActive = false;
+            ShowScreen(ScreenId.Missions);
+            _missionHubController?.OnTabOpened();
         }
 
         public void ShowPlanetDetail(int index)
@@ -401,18 +430,52 @@ namespace SolarAR.UI
 
         private void PopulateDetailPanel(string planetKey)
         {
-            PopulateEducationalPanel(
-                planetKey,
-                _detailPanelNameText,
-                _detailFirstFactText,
-                _detailSecondFactText);
-
             if (_educationalContentManager != null &&
                 _educationalContentManager.TryGetContent(planetKey, out PlanetContent content) &&
                 _detailPlanetNameText != null)
             {
                 _detailPlanetNameText.text = content.DisplayName;
             }
+
+            if (_educationalContentManager != null &&
+                _educationalContentManager.TryGetFacts(planetKey, out PlanetFacts facts))
+            {
+                _factCarouselController?.ShowPlanet(facts);
+                _factCarouselController?.SetPlanetPalette(planetKey);
+            }
+        }
+
+        private IEnumerator WarmPlanetThumbnails()
+        {
+            if (_planetRegistry == null || _planetPreviewController == null)
+            {
+                Debug.LogWarning("[UI] Planet thumbnail dependencies are not assigned.", this);
+                yield break;
+            }
+
+            for (int index = 0; index < PlanetOrder.Length; index++)
+            {
+                string planetKey = PlanetOrder[index];
+                if (_planetRegistry.TryGetPrefabByPlanetKey(planetKey, out GameObject prefab))
+                {
+                    _planetThumbnails[index] =
+                        _planetPreviewController.GetOrCreateThumbnail(planetKey, prefab);
+                    if (_planetGalleryImages != null && index < _planetGalleryImages.Length &&
+                        _planetGalleryImages[index] != null)
+                    {
+                        _planetGalleryImages[index].texture = _planetThumbnails[index];
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"[UI] No prefab available for '{planetKey}'.", this);
+                }
+
+                _missionHubController?.SetPlanetTextures(_planetThumbnails);
+                yield return null;
+            }
+
+            _thumbnailWarmup = null;
         }
 
         private void SetCuriositiesOpen(bool open)
@@ -465,6 +528,11 @@ namespace SolarAR.UI
 
         private void ShowScreen(ScreenId screen)
         {
+            if (_currentScreen == ScreenId.Missions && screen != ScreenId.Missions)
+            {
+                _missionHubController?.OnTabClosed();
+            }
+
             if (screen != ScreenId.Recognized && _curiositiesOpen)
             {
                 SetCuriositiesOpen(false);
@@ -482,6 +550,7 @@ namespace SolarAR.UI
             SetScreenActive(_lostScreen, screen == ScreenId.Lost);
             SetScreenActive(_planetsScreen, screen == ScreenId.Planets);
             SetScreenActive(_planetDetailScreen, screen == ScreenId.PlanetDetail);
+            SetScreenActive(_missionsScreen, screen == ScreenId.Missions);
 
             bool isArScreen = screen == ScreenId.Explore ||
                               screen == ScreenId.Searching ||
@@ -490,7 +559,8 @@ namespace SolarAR.UI
                               screen == ScreenId.Lost;
             bool isMainExperience = isArScreen ||
                                     screen == ScreenId.Planets ||
-                                    screen == ScreenId.PlanetDetail;
+                                    screen == ScreenId.PlanetDetail ||
+                                    screen == ScreenId.Missions;
             bool isPlanetTab = screen == ScreenId.Planets || screen == ScreenId.PlanetDetail;
             bool isPlanetDetail = screen == ScreenId.PlanetDetail;
 
@@ -508,14 +578,17 @@ namespace SolarAR.UI
                 }
             }
 
-            UpdateBottomNavigation(isPlanetTab);
+            UpdateBottomNavigation(isArScreen, isPlanetTab, screen == ScreenId.Missions);
         }
 
-        private void UpdateBottomNavigation(bool planetsActive)
+        private void UpdateBottomNavigation(
+            bool exploreActive,
+            bool planetsActive,
+            bool missionsActive)
         {
             if (_exploreTabBackground != null)
             {
-                _exploreTabBackground.color = planetsActive ? SolarARColors.Night : SolarARColors.Blue1;
+                _exploreTabBackground.color = exploreActive ? SolarARColors.Blue1 : SolarARColors.Night;
             }
 
             if (_planetsTabBackground != null)
@@ -523,14 +596,24 @@ namespace SolarAR.UI
                 _planetsTabBackground.color = planetsActive ? SolarARColors.Blue1 : SolarARColors.Night;
             }
 
+            if (_missionsTabBackground != null)
+            {
+                _missionsTabBackground.color = missionsActive ? SolarARColors.Blue1 : SolarARColors.Night;
+            }
+
             if (_exploreTabText != null)
             {
-                _exploreTabText.color = planetsActive ? SolarARColors.Lavender : SolarARColors.OnDark;
+                _exploreTabText.color = exploreActive ? SolarARColors.OnDark : SolarARColors.Lavender;
             }
 
             if (_planetsTabText != null)
             {
                 _planetsTabText.color = planetsActive ? SolarARColors.OnDark : SolarARColors.Lavender;
+            }
+
+            if (_missionsTabText != null)
+            {
+                _missionsTabText.color = missionsActive ? SolarARColors.OnDark : SolarARColors.Lavender;
             }
         }
 

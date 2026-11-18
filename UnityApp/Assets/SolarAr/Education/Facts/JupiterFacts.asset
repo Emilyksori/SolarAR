@@ -14,7 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: jupiter
   _facts:
-  - _title: Peso-pesado
-    _description: "J\xFApiter tem mais que o dobro da massa de todos os outros planetas juntos."
-  - _title: "Dia rel\xE2mpago"
-    _description: "Mesmo sendo enorme, J\xFApiter completa um giro em cerca de 10 horas."
+  - _id: jupiter-01-largest
+    _title: Planeta gigante
+    _description: "J\xFApiter \xE9 o maior planeta do Sistema Solar."
+    _category: 5
+    _order: 1
+    _visual: {fileID: 0}
+  - _id: jupiter-02-gas-giant
+    _title: "Sem ch\xE3o s\xF3lido"
+    _description: "Ele \xE9 um gigante gasoso e n\xE3o possui uma superf\xEDcie s\xF3lida como a Terra."
+    _category: 5
+    _order: 2
+    _visual: {fileID: 0}
+  - _id: jupiter-03-red-spot
+    _title: Grande Mancha Vermelha
+    _description: "Uma tempestade enorme gira em sua atmosfera h\xE1 muito tempo."
+    _category: 2
+    _order: 3
+    _visual: {fileID: 0}
+  - _id: jupiter-04-fast-day
+    _title: "Dia rel\xE2mpago"
+    _description: "Mesmo sendo enorme, J\xFApiter gira em cerca de 10 horas."
+    _category: 0
+    _order: 4
+    _visual: {fileID: 0}
+  - _id: jupiter-05-cloud-bands
+    _title: Faixas de nuvens
+    _description: "Ventos em dire\xE7\xF5es diferentes formam as faixas claras e escuras."
+    _category: 2
+    _order: 5
+    _visual: {fileID: 0}
+  - _id: jupiter-06-faint-rings
+    _title: "An\xE9is discretos"
+    _description: "J\xFApiter possui an\xE9is fracos feitos principalmente de poeira."
+    _category: 4
+    _order: 6
+    _visual: {fileID: 0}
+  - _id: jupiter-07-strong-magnet
+    _title: "\xCDm\xE3 poderoso"
+    _description: "Seu campo magn\xE9tico \xE9 muito mais forte que o da Terra."
+    _category: 5
+    _order: 7
+    _visual: {fileID: 0}
+  - _id: jupiter-08-galilean-moons
+    _title: Quatro luas famosas
+    _description: Io, Europa, Ganimedes e Calisto foram observadas por Galileu em 1610.
+    _category: 6
+    _order: 8
+    _visual: {fileID: 0}

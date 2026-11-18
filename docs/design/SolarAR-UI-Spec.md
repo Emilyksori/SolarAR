@@ -46,6 +46,41 @@ A base de `412 × 915 px` é explicitamente indicada na prancha de estilos. Na i
 
 O espaçamento deve usar apenas os passos documentados na seção de tokens. Não é possível associar com segurança cada passo a margens ou lacunas específicas usando somente as imagens exportadas.
 
+### 2.2 Extensão aprovada — Quiz Galáctico MVP 1.0
+
+O Quiz Galáctico amplia a experiência principal sem câmera e reutiliza integralmente os tokens e componentes existentes. A navegação inferior passa a ter três abas de mesma hierarquia: `Explorar`, `Planetas` e `Missões`. A aba `Missões` não reinicia a sessão AR e não mantém modelos AR ou previews da galeria visíveis sobre o quiz.
+
+- usar `Assets/SolarAr/UI/Illustrations/CuriosityMoon.png` como mascote nas telas inicial e de resultado, sem redesenho;
+- manter uma única ação principal evidente por estado: começar, responder, avançar ou jogar novamente;
+- apresentar feedback e explicação educativa depois de qualquer resposta, sem avanço automático;
+- bloquear as alternativas após a primeira escolha e manter `Próxima pergunta` desabilitado antes da resposta;
+- representar o resultado com uma a três estrelas nas cores existentes, sem criar um novo estilo visual;
+- descartar partidas incompletas ao sair da aba, sem contabilizá-las como concluídas.
+
+### 2.3 Extensão aprovada — Central de Jogos Educativos MVP 1.0
+
+A aba `Missões` passa a abrir a `Central de Missões Espaciais`, sem câmera, antes de iniciar qualquer atividade. A Central organiza quatro atividades em uma grade de duas colunas: `Quiz Galáctico`, `Memória Cósmica`, `Ordem Planetária` e `Detetive Espacial`.
+
+- reutilizar os tokens, fontes, botões, cards e imagens de planetas existentes;
+- manter a mascote oficial em `Assets/SolarAr/UI/Illustrations/CuriosityMoon.png` onde ela for exibida;
+- usar cards inteiramente clicáveis, com nome e descrição textual além do símbolo visual;
+- apresentar instruções curtas, progresso, feedback textual, resultado com estrelas, `Jogar novamente` e retorno à Central;
+- iniciar cada entrada em um jogo com uma nova partida e descartar o estado incompleto ao sair;
+- manter câmera, tracking e preview 3D ocultos durante toda a navegação da Central e dos jogos;
+- informar na `Ordem Planetária` que a sequência usa apenas os sete planetas disponíveis no SolarAR e não representa a lista completa do Sistema Solar.
+
+### 2.4 Extensão aprovada — Planetas 3D e carrossel educativo
+
+As telas digitais passam a representar os planetas com os sete prefabs 3D já usados pelo SolarAR. As imagens dos cards físicos permanecem exclusivas do reconhecimento por imagem e não devem aparecer como ilustração da galeria ou dos jogos.
+
+- gerar uma miniatura estática a partir de cada prefab 3D e reutilizar o mesmo cache na galeria, na Memória Cósmica, na Ordem Planetária e na revelação do Detetive Espacial;
+- limitar a geração a uma câmera de preview e um modelo temporário por vez, evitando câmeras ou instâncias permanentes por card;
+- manter somente um modelo 3D vivo na tela de detalhe, com rotação suave e interação por arraste;
+- apresentar oito curiosidades por planeta em um carrossel previsível, com um cartão por vez, contador, categoria, botões anterior/próximo e deslize horizontal;
+- preservar o planeta selecionado enquanto as curiosidades são percorridas e manter controles separados para trocar de planeta;
+- usar fundo azul-marinho/roxo, acentos ciano, lilás e magenta, cartões arredondados e estrelas discretas, sem comprometer contraste ou aumentar a quantidade de estímulos simultâneos;
+- manter Fredoka, Nunito e a lua-mascote oficial, sem copiar marcas ou elementos identificadores de referências externas.
+
 ## 3. Design tokens
 
 ### 3.1 Cores
@@ -53,6 +88,10 @@ O espaçamento deve usar apenas os passos documentados na seção de tokens. Nã
 | Token | Hex | Uso e exemplos |
 |---|---|---|
 | `background/night` | `#0A1433` | Fundo principal das telas, área de AR sem câmera e base da navegação. |
+| `background/deep-space` | `#080B24` | Base inferior do gradiente espacial nas telas sem câmera. |
+| `surface/space-card` | `#182852` | Cartões escuros da galeria, carrossel e Central de Missões. |
+| `accent/purple` | `#6D4AFF` | Profundidade no gradiente e brilho discreto de superfícies espaciais. |
+| `accent/magenta` | `#E650B7` | Acento alternado em ícones da Central de Missões. |
 | `text/ink` | `#19365B` | Texto escuro sobre superfícies claras e títulos de cards. |
 | `blue/1` | `#387ED8` | Controles azuis, ícones e elementos ativos. |
 | `blue/4` | `#294671` | Superfícies azuis, cards da galeria e containers de apoio. |
@@ -98,7 +137,7 @@ Todos os afastamentos futuros devem preferir essa escala. A aplicação exata de
 | Botão de ação | Botão arredondado com label e ícone opcional; variantes amarela, ciano e clara. | Padrão, com ícone, sem ícone e desabilitado. Estado pressionado: **A confirmar no Figma**. | Altura mínima `56 px`; largura e raio: **A confirmar no Figma**. | Entrada, permissão, instruções, AR e painel educacional. |
 | Botão de ícone | Controle circular ou arredondado para voltar, ajuda, fechar e câmera. | Padrão/ativo; demais estados: **A confirmar no Figma**. | Área de toque mínima `48 × 48 px`; visual interno: **A confirmar no Figma**. | Headers, painel educacional e estados AR. |
 | Header | Linha superior com voltar, título central/contextual e ajuda quando aplicável. | Varia conforme tela. | Altura e paddings: **A confirmar no Figma**. | Instruções, Explorar, Planetas e detalhe. |
-| Bottom navigation | Barra com duas abas, ícone e label: `Explorar` e `Planetas`; a aba ativa recebe fundo azul/ciano destacado. | Explorar ativa; Planetas ativa. | Altura, largura e raio: **A confirmar no Figma**. | Fluxos principais após a entrada. |
+| Bottom navigation | Barra com três abas e labels: `Explorar`, `Planetas` e `Missões`; a aba ativa recebe fundo azul/ciano destacado. | Explorar ativa; Planetas ativa; Missões ativa. | Altura, largura e raio: **A confirmar no Figma**. | Fluxos principais após a entrada. |
 | Moldura de leitura AR | Quatro cantos ciano delimitam a região onde o card deve ser posicionado. | Vazia, procurando e card perdido. | **A confirmar no Figma**. | Explorar e estados de busca/perda. |
 | Mensagem de estado AR | Ícone, título curto, texto de apoio e, quando necessário, ação. | Inicial, procurando, reconhecido, perdido, pouca luz e troca de card. | **A confirmar no Figma**. | Experiência de câmera. |
 | Confirmação de reconhecimento | Chip/faixa verde com check e texto `Card reconhecido!`. | Visível após reconhecimento; duração: **A confirmar no Figma**. | **A confirmar no Figma**. | Card reconhecido. |
@@ -117,7 +156,8 @@ Os ícones representam câmera, ajuda, planeta/órbita, áudio, busca, luz, troc
 O fluxo de entrada oferece três caminhos: iniciar a câmera, ouvir conteúdo opcional e abrir `Como usar`. Ao entrar na experiência principal, a navegação inferior alterna entre:
 
 - `Explorar`: experiência AR e seus estados de tracking;
-- `Planetas`: galeria com os oito planetas e acesso ao detalhe sem câmera.
+- `Planetas`: galeria com os sete planetas e acesso ao detalhe sem câmera;
+- `Missões`: Quiz Galáctico independente da câmera.
 
 Fluxos identificados:
 
@@ -127,6 +167,8 @@ Fluxos identificados:
 
 `Explorar ↔ Planetas → Detalhe do planeta → Anterior/Próximo`
 
+`Explorar ↔ Planetas ↔ Missões → Central de Missões → Jogo → Resultado → Jogar novamente ou Central`
+
 `Card perdido → Retorno à busca → Card recuperado`
 
 `Planeta ativo → Troca de card → Retorno à busca → Novo planeta reconhecido`
@@ -135,7 +177,7 @@ O botão voltar aparece nos headers das telas internas. O controle fechar do pai
 
 ## 6. Telas e estados visuais
 
-As referências declaram `12 telas nativas`, identificadas abaixo.
+As referências originais declaram `12 telas nativas`. Os jogos educativos acrescentam a Central e os estados internos documentados em 6.13 a 6.18.
 
 ### 6.1 Entrada / SolarAR
 
@@ -210,7 +252,7 @@ As referências declaram `12 telas nativas`, identificadas abaixo.
 ### 6.11 Planetas
 
 - **Objetivo:** permitir conhecer os planetas sem usar a câmera.
-- **Conteúdo:** título `Planetas`, instrução `Toque para ver de perto` e grade `2 × 4`: Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano e Netuno.
+- **Conteúdo:** título `Planetas`, instrução `Toque para ver de perto` e grade com Mercúrio, Terra, Marte, Júpiter, Saturno, Urano e Netuno.
 - **Ações:** selecionar um planeta, voltar e alternar para `Explorar`.
 - **Estado do sistema:** galeria estática; seleção abre apenas um planeta.
 
@@ -220,6 +262,48 @@ As referências declaram `12 telas nativas`, identificadas abaixo.
 - **Conteúdo:** nome (`Terra` na referência), label `Visualização sem câmera`, planeta, painel educacional, áudio e dicas de gesto.
 - **Ações:** girar, aproximar/reduzir, ouvir, fechar conteúdo, `Anterior`, `Próximo`, voltar e alternar abas.
 - **Estado do sistema:** somente um planeta selecionado, sem tracking AR.
+
+### 6.13 Central de Missões Espaciais
+
+- **Objetivo:** permitir a escolha previsível entre as quatro atividades educativas.
+- **Conteúdo:** título, introdução curta e grade `2 × 2` com símbolo, nome e descrição de cada jogo.
+- **Ações:** abrir `Quiz Galáctico`, `Memória Cósmica`, `Ordem Planetária` ou `Detetive Espacial`; alternar abas inferiores.
+- **Estado do sistema:** nenhuma partida ativa; câmera e preview 3D ocultos.
+
+### 6.14 Quiz Galáctico — início, pergunta e feedback
+
+- **Objetivo:** responder uma pergunta por vez com retorno educativo.
+- **Conteúdo:** introdução com a lua-mascote oficial e resumo local; durante a partida, progresso textual e visual, enunciado, três alternativas, feedback da escolha e explicação científica curta.
+- **Ações:** começar, selecionar uma única alternativa, avançar depois do feedback ou voltar à Central.
+- **Estado do sistema:** alternativas bloqueadas após a resposta; nenhuma pontuação duplicada; saída da aba descarta a partida incompleta.
+
+### 6.15 Quiz Galáctico — resultado
+
+- **Objetivo:** comunicar o desempenho de maneira acolhedora e permitir uma nova partida.
+- **Conteúdo:** título `Missão concluída!`, pontuação, quantidade de acertos, uma a três estrelas e mensagem da lua-mascote.
+- **Ações:** `Jogar novamente` ou alternar entre as três abas.
+- **Estado do sistema:** melhor pontuação e quantidade de partidas concluídas persistidas localmente, sem dados pessoais.
+
+### 6.16 Memória Cósmica
+
+- **Objetivo:** encontrar seis pares entre doze cartas usando seis planetas escolhidos por partida.
+- **Conteúdo:** grade de cartas, pares encontrados, tentativas e instrução curta.
+- **Ações:** revelar cartas, jogar novamente e voltar à Central.
+- **Estado do sistema:** no máximo duas cartas em avaliação; interação bloqueada durante a ocultação de um par incorreto.
+
+### 6.17 Ordem Planetária
+
+- **Objetivo:** ordenar os sete planetas disponíveis por distância ao Sol.
+- **Conteúdo:** aviso explícito sobre a ausência de Vênus no conjunto do SolarAR, sete posições, contador e feedback de conferência.
+- **Ações:** selecionar origem e destino, conferir, tentar novamente, jogar novamente e voltar à Central.
+- **Estado do sistema:** posições corretas e incorretas recebem feedback visual e textual; a partida termina somente com todas corretas.
+
+### 6.18 Detetive Espacial
+
+- **Objetivo:** identificar cinco planetas diferentes a partir de pistas progressivas.
+- **Conteúdo:** progresso, pontuação, uma a três pistas, três alternativas e explicação após a resposta.
+- **Ações:** pedir pista, responder uma vez, avançar manualmente, jogar novamente e voltar à Central.
+- **Estado do sistema:** resposta e novas pistas bloqueadas depois da escolha; pontuação depende da quantidade de pistas reveladas.
 
 ## 7. Estados de AR e tracking
 
@@ -281,6 +365,12 @@ Mapeamento conceitual esperado:
 | `SolarARManager` / `AppState` | Coordenar a navegação e o estado geral quando necessário, mantendo responsabilidades explícitas. |
 | `ARImageTrackingManager` / `TrackedImageHandler` | Informar detecção, atualização e perda de imagens à UI por uma fronteira clara; não conter textos educacionais. |
 | `GestureController` e controladores de interação | Interpretar toque, arraste e pinça; a UI apenas comunica as affordances e o estado. |
+| `QuizQuestionBank` / `QuizQuestionSelector` | Armazenar e selecionar perguntas sem depender da camada visual. |
+| `QuizManager` / `QuizSession` | Coordenar a partida, bloquear respostas repetidas, calcular progresso e registrar somente partidas concluídas. |
+| `QuizScreenController` | Apresentar os estados inicial, pergunta, feedback e resultado; não contém o banco de perguntas. |
+| `MissionHubController` | Coordenar Central, entrada e saída dos quatro jogos; descartar a partida incompleta ao trocar de jogo ou aba. |
+| Sessões de Memória, Ordem e Detetive | Manter regras, estado, pontuação e conclusão sem depender da apresentação visual. |
+| Controladores de tela dos jogos | Apresentar o estado recebido das sessões e encaminhar as interações; não duplicar regras. |
 
 Este mapeamento registra responsabilidades, não exige criação imediata de classes nem define APIs.
 

@@ -14,7 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SolarAR.Education.PlanetFacts
   _planetKey: saturn
   _facts:
-  - _title: Planeta boia
+  - _id: saturn-01-icy-rings
+    _title: "An\xE9is de gelo"
+    _description: "Os an\xE9is s\xE3o formados por incont\xE1veis peda\xE7os de gelo e rocha."
+    _category: 4
+    _order: 1
+    _visual: {fileID: 0}
+  - _id: saturn-02-many-ringlets
+    _title: "Muitos an\xE9is"
+    _description: "O que parece um \xFAnico conjunto \xE9 dividido em milhares de faixas estreitas."
+    _category: 4
+    _order: 2
+    _visual: {fileID: 0}
+  - _id: saturn-03-low-density
+    _title: Planeta que boiaria
     _description: "Saturno \xE9 menos denso que a \xE1gua e boiaria em um oceano grande o bastante."
-  - _title: "An\xE9is em peda\xE7os"
-    _description: "Seus an\xE9is t\xEAm blocos de gelo que v\xE3o de gr\xE3os min\xFAsculos a montanhas."
+    _category: 5
+    _order: 3
+    _visual: {fileID: 0}
+  - _id: saturn-04-gas-giant
+    _title: Gigante gasoso
+    _description: "Ele \xE9 composto principalmente por hidrog\xEAnio e h\xE9lio."
+    _category: 5
+    _order: 4
+    _visual: {fileID: 0}
+  - _id: saturn-05-fast-spin
+    _title: "Giro r\xE1pido"
+    _description: "Saturno completa uma rota\xE7\xE3o em pouco mais de 10 horas."
+    _category: 0
+    _order: 5
+    _visual: {fileID: 0}
+  - _id: saturn-06-polar-hexagon
+    _title: "Hex\xE1gono no polo"
+    _description: Uma corrente de ar forma um desenho de seis lados perto do polo norte.
+    _category: 2
+    _order: 6
+    _visual: {fileID: 0}
+  - _id: saturn-07-flattened-shape
+    _title: Um pouco achatado
+    _description: "A rota\xE7\xE3o r\xE1pida deixa o planeta mais largo no meio."
+    _category: 5
+    _order: 7
+    _visual: {fileID: 0}
+  - _id: saturn-08-titan
+    _title: Lua com atmosfera
+    _description: "Tit\xE3, uma de suas luas, possui uma atmosfera espessa."
+    _category: 4
+    _order: 8
+    _visual: {fileID: 0}

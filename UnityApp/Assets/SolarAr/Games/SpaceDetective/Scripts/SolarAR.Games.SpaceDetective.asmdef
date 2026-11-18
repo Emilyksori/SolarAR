@@ -1,0 +1,10 @@
+{
+  "name": "SolarAR.Games.SpaceDetective",
+  "rootNamespace": "SolarAR.Games.SpaceDetective",
+  "references": [
+    "SolarAR.Games.Shared",
+    "Unity.TextMeshPro",
+    "Unity.ugui"
+  ],
+  "autoReferenced": true
+}
