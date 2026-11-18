@@ -20,52 +20,106 @@ namespace SolarAR.Planets
 
         [SerializeField] private List<PlanetEntry> _planets = new();
 
+        private Dictionary<string, GameObject> _prefabsByReferenceImageName;
+        private Dictionary<string, string> _planetKeysByReferenceImageName;
+        private Dictionary<string, GameObject> _prefabsByPlanetKey;
+        private bool _cacheDirty = true;
+
+        public int Count => _planets?.Count ?? 0;
+
+        private void Awake()
+        {
+            RebuildCache();
+        }
+
+        private void OnValidate()
+        {
+            _cacheDirty = true;
+        }
+
         public bool TryGetPrefab(string referenceImageName, out GameObject planetPrefab)
         {
-            foreach (var planet in _planets)
-            {
-                if (planet != null &&
-                    string.Equals(planet.ReferenceImageName, referenceImageName, StringComparison.Ordinal))
-                {
-                    planetPrefab = planet.PlanetPrefab;
-                    return planetPrefab != null;
-                }
-            }
-
-            planetPrefab = null;
-            return false;
+            EnsureCache();
+            return _prefabsByReferenceImageName.TryGetValue(
+                       referenceImageName ?? string.Empty,
+                       out planetPrefab) && planetPrefab != null;
         }
 
         public bool TryGetPlanetKey(string referenceImageName, out string planetKey)
         {
-            foreach (var planet in _planets)
-            {
-                if (planet != null &&
-                    string.Equals(planet.ReferenceImageName, referenceImageName, StringComparison.Ordinal))
-                {
-                    planetKey = planet.PlanetKey;
-                    return !string.IsNullOrWhiteSpace(planetKey);
-                }
-            }
-
-            planetKey = null;
-            return false;
+            EnsureCache();
+            return _planetKeysByReferenceImageName.TryGetValue(
+                       referenceImageName ?? string.Empty,
+                       out planetKey) && !string.IsNullOrWhiteSpace(planetKey);
         }
 
         public bool TryGetPrefabByPlanetKey(string planetKey, out GameObject planetPrefab)
         {
-            foreach (var planet in _planets)
+            EnsureCache();
+            return _prefabsByPlanetKey.TryGetValue(
+                       planetKey ?? string.Empty,
+                       out planetPrefab) && planetPrefab != null;
+        }
+
+        public bool TryGetEntry(
+            int index,
+            out string referenceImageName,
+            out GameObject planetPrefab)
+        {
+            if (_planets == null || index < 0 || index >= _planets.Count)
             {
-                if (planet != null &&
-                    string.Equals(planet.PlanetKey, planetKey, StringComparison.Ordinal))
+                referenceImageName = null;
+                planetPrefab = null;
+                return false;
+            }
+
+            PlanetEntry planet = _planets[index];
+            referenceImageName = planet?.ReferenceImageName;
+            planetPrefab = planet?.PlanetPrefab;
+            return !string.IsNullOrWhiteSpace(referenceImageName) && planetPrefab != null;
+        }
+
+        private void EnsureCache()
+        {
+            if (_cacheDirty || _prefabsByReferenceImageName == null)
+            {
+                RebuildCache();
+            }
+        }
+
+        private void RebuildCache()
+        {
+            _prefabsByReferenceImageName = new Dictionary<string, GameObject>(
+                StringComparer.Ordinal);
+            _planetKeysByReferenceImageName = new Dictionary<string, string>(
+                StringComparer.Ordinal);
+            _prefabsByPlanetKey = new Dictionary<string, GameObject>(StringComparer.Ordinal);
+
+            if (_planets != null)
+            {
+                foreach (PlanetEntry planet in _planets)
                 {
-                    planetPrefab = planet.PlanetPrefab;
-                    return planetPrefab != null;
+                    if (planet == null)
+                    {
+                        continue;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(planet.ReferenceImageName))
+                    {
+                        _prefabsByReferenceImageName[planet.ReferenceImageName] =
+                            planet.PlanetPrefab;
+                        _planetKeysByReferenceImageName[planet.ReferenceImageName] =
+                            planet.PlanetKey;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(planet.PlanetKey))
+                    {
+                        _prefabsByPlanetKey[planet.PlanetKey] = planet.PlanetPrefab;
+                    }
                 }
             }
 
-            planetPrefab = null;
-            return false;
+            _cacheDirty = false;
         }
     }
 }

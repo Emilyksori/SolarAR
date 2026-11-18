@@ -177,6 +177,22 @@ namespace SolarAR.Editor
             }
         }
 
+        public static void ApplyTrackingConfigurationAndExit()
+        {
+            try
+            {
+                AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                ConfigureSceneData();
+                ValidateAll();
+                EditorApplication.Exit(0);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                EditorApplication.Exit(1);
+            }
+        }
+
         public static void BuildAll()
         {
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -441,6 +457,8 @@ namespace SolarAR.Editor
 
             SerializedObject handlerData = new(handler);
             SetObject(handlerData, "_planetRegistry", registry);
+            handlerData.FindProperty("_prewarmPlanetInstances").boolValue = true;
+            handlerData.FindProperty("_enablePerformanceDiagnostics").boolValue = true;
             handlerData.ApplyModifiedPropertiesWithoutUndo();
 
             SerializedObject educationData = new(education);
@@ -452,7 +470,9 @@ namespace SolarAR.Editor
 
             imageManager.referenceLibrary =
                 AssetDatabase.LoadAssetAtPath<XRReferenceImageLibrary>(LibraryPath);
-            imageManager.requestedMaxNumberOfMovingImages = 1;
+            // Two moving images let ARCore acquire the incoming card while the outgoing
+            // card is still leaving Tracking, without paying the cost of tracking all seven.
+            imageManager.requestedMaxNumberOfMovingImages = 2;
 
             EditorUtility.SetDirty(registry);
             EditorUtility.SetDirty(handler);
@@ -588,14 +608,29 @@ namespace SolarAR.Editor
                 errors.Add("EducationalContentManager must reference seven content and seven facts assets.");
             }
 
-            if (imageManager.requestedMaxNumberOfMovingImages != 1)
+            if (imageManager.requestedMaxNumberOfMovingImages != 2)
             {
-                errors.Add("ARTrackedImageManager must keep Max Moving Images set to 1.");
+                errors.Add("ARTrackedImageManager must keep Max Moving Images set to 2.");
             }
 
             if (!imageManager.enabled || handler == null || !handler.enabled)
             {
                 errors.Add("ARTrackedImageManager and TrackedImageHandler must remain enabled.");
+            }
+
+            else
+            {
+                SerializedObject handlerData = new(handler);
+                if (!handlerData.FindProperty("_prewarmPlanetInstances").boolValue)
+                {
+                    errors.Add("TrackedImageHandler must prewarm the seven planet instances.");
+                }
+
+                if (!handlerData.FindProperty("_enablePerformanceDiagnostics").boolValue)
+                {
+                    errors.Add(
+                        "TrackedImageHandler development diagnostics must remain enabled.");
+                }
             }
 
             if (imageManager.referenceLibrary is not XRReferenceImageLibrary serializedLibrary ||
